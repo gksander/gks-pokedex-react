@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.2.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -10,17 +11,26 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "autoprefixer": "^10.1.0",
+    "classnames": "^2.2.6",
+    "postcss": "^8.2.2",
+    "postcss-cli": "^8.3.1",
+    "postcss-loader": "^4.1.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "tailwindcss": "^2.0.2",
     "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "concurrently \"react-scripts start\" \"yarn watch:css\"",
+    "build": "yarn build:css && yarn react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:css": "NODE_ENV=production PUBLIC_URL=https://gif-maker.gksander.com postcss src/styles/tailwind.css -o src/styles/index.css",
+    "watch:css": "NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch"
   },
   "eslintConfig": {
     "extends": [
@@ -41,6 +51,9 @@
     ]
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.11",
+    "@types/react-router-dom": "^5.1.7",
+    "concurrently": "^5.3.0",
     "csvtojson": "^2.0.10",
     "fs-extra": "^9.0.1",
     "klaw": "^3.0.0",
