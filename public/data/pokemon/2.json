@@ -1,0 +1,144 @@
+{
+  "pageInfo": {
+    "page": 2,
+    "totalNumPages": 3
+  },
+  "data": [
+    {
+      "id": "4",
+      "name": "Charmander",
+      "slug": "charmander",
+      "flavorText": "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail.",
+      "colorPalette": {
+        "Vibrant": [
+          242,
+          116,
+          60
+        ],
+        "DarkVibrant": [
+          45,
+          105,
+          120
+        ],
+        "LightVibrant": [
+          244,
+          180,
+          132
+        ],
+        "Muted": [
+          88,
+          149,
+          166
+        ],
+        "DarkMuted": [
+          141,
+          69,
+          63
+        ],
+        "LightMuted": [
+          221,
+          199,
+          179
+        ]
+      },
+      "types": [
+        {
+          "slug": "fire",
+          "name": "Fire"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Charmeleon",
+      "slug": "charmeleon",
+      "flavorText": "When it swings its burning tail, it elevates the temperature to unbearably high levels.",
+      "colorPalette": {
+        "Vibrant": [
+          235,
+          98,
+          60
+        ],
+        "DarkVibrant": [
+          120.26511627906976,
+          35.77116279069768,
+          12.334883720930241
+        ],
+        "LightVibrant": [
+          247,
+          220,
+          137
+        ],
+        "Muted": [
+          183,
+          98,
+          88
+        ],
+        "DarkMuted": [
+          71,
+          57,
+          50
+        ],
+        "LightMuted": [
+          204,
+          173,
+          161
+        ]
+      },
+      "types": [
+        {
+          "slug": "fire",
+          "name": "Fire"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Charizard",
+      "slug": "charizard",
+      "flavorText": "Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally.",
+      "colorPalette": {
+        "Vibrant": [
+          236,
+          89,
+          44
+        ],
+        "DarkVibrant": [
+          5,
+          104,
+          120
+        ],
+        "LightVibrant": [
+          252,
+          172,
+          108
+        ],
+        "Muted": [
+          176,
+          129,
+          97
+        ],
+        "DarkMuted": [
+          46,
+          36,
+          27
+        ],
+        "LightMuted": [
+          149.94000000000003,
+          68.34,
+          3.0599999999999743
+        ]
+      },
+      "types": [
+        {
+          "slug": "fire",
+          "name": "Fire"
+        },
+        {
+          "slug": "flying",
+          "name": "Flying"
+        }
+      ]
+    }
+  ]
+}

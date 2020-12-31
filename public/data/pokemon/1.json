@@ -1,0 +1,152 @@
+{
+  "pageInfo": {
+    "page": 1,
+    "totalNumPages": 3
+  },
+  "data": [
+    {
+      "id": "1",
+      "name": "Bulbasaur",
+      "slug": "bulbasaur",
+      "flavorText": "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.",
+      "colorPalette": {
+        "Vibrant": [
+          172,
+          66,
+          81
+        ],
+        "DarkVibrant": [
+          95.82857142857144,
+          36.77142857142857,
+          45.128571428571405
+        ],
+        "LightVibrant": [
+          146,
+          212,
+          180
+        ],
+        "Muted": [
+          91,
+          156,
+          115
+        ],
+        "DarkMuted": [
+          51,
+          88,
+          65
+        ],
+        "LightMuted": [
+          162,
+          211,
+          188
+        ]
+      },
+      "types": [
+        {
+          "slug": "grass",
+          "name": "Grass"
+        },
+        {
+          "slug": "poison",
+          "name": "Poison"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Ivysaur",
+      "slug": "ivysaur",
+      "flavorText": "When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.",
+      "colorPalette": {
+        "Vibrant": [
+          196,
+          52,
+          92
+        ],
+        "DarkVibrant": [
+          27,
+          98,
+          115
+        ],
+        "LightVibrant": [
+          219,
+          157,
+          170
+        ],
+        "Muted": [
+          84,
+          139,
+          155
+        ],
+        "DarkMuted": [
+          48,
+          76,
+          61
+        ],
+        "LightMuted": [
+          124,
+          186,
+          189
+        ]
+      },
+      "types": [
+        {
+          "slug": "grass",
+          "name": "Grass"
+        },
+        {
+          "slug": "poison",
+          "name": "Poison"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Venusaur",
+      "slug": "venusaur",
+      "flavorText": "The plant blooms when it is absorbing solar energy. It stays on the move to seek sunlight.",
+      "colorPalette": {
+        "Vibrant": [
+          220,
+          109,
+          126
+        ],
+        "DarkVibrant": [
+          36,
+          100,
+          104
+        ],
+        "LightVibrant": [
+          244,
+          124,
+          140
+        ],
+        "Muted": [
+          110,
+          156,
+          118
+        ],
+        "DarkMuted": [
+          83,
+          52,
+          59
+        ],
+        "LightMuted": [
+          213,
+          177,
+          196
+        ]
+      },
+      "types": [
+        {
+          "slug": "grass",
+          "name": "Grass"
+        },
+        {
+          "slug": "poison",
+          "name": "Poison"
+        }
+      ]
+    }
+  ]
+}
