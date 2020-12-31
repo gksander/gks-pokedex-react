@@ -3,6 +3,7 @@ import { useInfiniteQuery } from "react-query";
 import { QUERY_CACHE_KEYS } from "../consts";
 import { $api } from "../$api";
 import { FetchPokemonListDTO } from "../dto/FetchPokemonList.dto";
+import { Link } from "react-router-dom";
 
 type HomeViewProps = {};
 
@@ -41,7 +42,9 @@ export const HomeView: React.FC<HomeViewProps> = () => {
     <div>
       {pokemon.map((p) => (
         <div key={p.id} className="border-2 mb-4 p-4">
-          <div className="font-bold">{p.slug}</div>
+          <Link className="font-bold" to={`/${p.slug}`}>
+            {p.slug}
+          </Link>
         </div>
       ))}
       <div>

@@ -7,6 +7,8 @@ import { HomeView } from "./views/Home.view";
 import { TypesView } from "./views/Types.view";
 import { SearchView } from "./views/Search.view";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { PokemonDetailsView } from "./views/ PokemonDetails.view";
+import { TypeDetailsView } from "./views/TypeDetails.view";
 
 export const App: React.FC = () => {
   const shouldShowHeaderShadow = false;
@@ -25,6 +27,9 @@ export const App: React.FC = () => {
               "p-2 transition-all duration-150 sticky top-0 z-10",
               shouldShowHeaderShadow && ["shadow"],
             )}
+            style={{
+              backgroundColor: "var(--background-color, white)",
+            }}
           >
             <div className="container max-w-2xl flex flex-row justify-between items-center">
               <NavLink
@@ -57,7 +62,9 @@ export const App: React.FC = () => {
             <div className="container max-w-2xl">
               <Switch>
                 <Route path={ROUTES.SEARCH} component={SearchView} />
+                <Route path={`/types/:typeSlug`} component={TypeDetailsView} />
                 <Route path={ROUTES.TYPES} component={TypesView} />
+                <Route path={`/:pokemonSlug`} component={PokemonDetailsView} />
                 <Route path={ROUTES.HOME} component={HomeView} />
               </Switch>
             </div>

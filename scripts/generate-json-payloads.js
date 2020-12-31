@@ -102,7 +102,6 @@ module.exports = async () => {
 const generateTypesList = async ({ typesData }) => {
   const payload = typesData.map((type) => ({
     id: type.id,
-    name: capitalize(type.identifier),
     slug: type.identifier,
   }));
 
@@ -152,7 +151,6 @@ const generateIndividualTypePayloads = async ({
 const generateSearchList = async ({ pokemonData }) => {
   const payload = pokemonData.map((pokemon) => ({
     id: pokemon.id,
-    name: capitalize(pokemon.identifier),
     slug: pokemon.identifier,
   }));
 
