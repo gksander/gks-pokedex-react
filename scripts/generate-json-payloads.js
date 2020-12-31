@@ -13,7 +13,7 @@ const NUM_POKEMON =
     gen3: 384,
     gen4: 491,
     gen5: 649,
-  }["starters"] || 9;
+  }["gen1"] || 9;
 const DATA_DIR = path.join(__dirname, "data/csv");
 const OUTPUT_DIR = path.join(__dirname, "../public/data");
 
@@ -22,7 +22,6 @@ module.exports = async () => {
     /**
      * Load in data first
      */
-    // Types
     // Types
     const typesData = await csv().fromFile(path.join(DATA_DIR, "types.csv"));
     // Damage factors (how strong types are against each other)
@@ -65,14 +64,30 @@ module.exports = async () => {
       path.join(DATA_DIR, "evolution_chains.csv"),
     );
 
-    await generateTypesList({ typesData });
-    await generateSearchList({ pokemonData });
+    // Pokemon
     await generatePaginatedPokemonList({
       pokemonData,
-      speciesData,
       pokemonTypesData,
       typesData,
       speciesFlavorData,
+    });
+    await generateIndividualPokemonPayloads({
+      pokemonData,
+      pokemonTypesData,
+      typesData,
+      speciesFlavorData,
+      statsData,
+      pokemonStatsData,
+      damageFactorData,
+    });
+    // Search
+    await generateSearchList({ pokemonData });
+    // Types
+    await generateTypesList({ typesData });
+    await generateIndividualTypePayloads({
+      typesData,
+      pokemonTypesData,
+      pokemonData,
     });
   } catch (err) {
     console.log(err);
@@ -95,6 +110,42 @@ const generateTypesList = async ({ typesData }) => {
   await fse.writeJson(path.join(OUTPUT_DIR, "types/index.json"), payload);
 };
 
+const generateIndividualTypePayloads = async ({
+  typesData,
+  pokemonTypesData,
+  pokemonData,
+}) => {
+  await fse.ensureDir(path.join(OUTPUT_DIR, "types"));
+
+  const promises = typesData.map((type) => {
+    return new Promise(async (resolve) => {
+      try {
+        const payload = {
+          slug: type.identifier,
+          pokemon: pokemonTypesData
+            .filter((assoc) => assoc.type_id === type.id)
+            .map((assoc) => assoc.pokemon_id)
+            .map(
+              (id) =>
+                pokemonData.find((p) => String(p.id) === String(id))
+                  ?.identifier || undefined,
+            ),
+          // TODO: damage factors
+        };
+
+        await fse.writeJson(
+          path.join(OUTPUT_DIR, "types", `${type.identifier}.json`),
+          payload,
+        );
+      } finally {
+        resolve();
+      }
+    });
+  });
+
+  await Promise.all(promises);
+};
+
 /**
  * Generating search list
  */
@@ -112,21 +163,20 @@ const generateSearchList = async ({ pokemonData }) => {
 /**
  * Generating pokemon list
  */
-const PAGE_SIZE = 3; // TODO: BUMP THIS
+const PAGE_SIZE = 25;
 const generatePaginatedPokemonList = async ({
   pokemonData,
-  speciesData,
   speciesFlavorData,
   pokemonTypesData,
   typesData,
 }) => {
-  await fse.ensureDir(path.join(OUTPUT_DIR, "pokemon"));
-  await fse.emptyDir(path.join(OUTPUT_DIR, "pokemon"));
+  await fse.ensureDir(path.join(OUTPUT_DIR, "pokemon/list"));
+  await fse.emptyDir(path.join(OUTPUT_DIR, "pokemon/list"));
 
   const totalNumPages = Math.ceil(pokemonData.length / PAGE_SIZE);
   for (let page = 1; page <= totalNumPages; page++) {
     const pageFirstId = (page - 1) * PAGE_SIZE + 1;
-    const pageLastId = page * PAGE_SIZE;
+    const pageLastId = Math.min(page * PAGE_SIZE, pokemonData.length);
     const payload = {
       pageInfo: { page, totalNumPages },
       pokemon: [],
@@ -134,7 +184,6 @@ const generatePaginatedPokemonList = async ({
 
     for (let id = pageFirstId; id <= pageLastId; id++) {
       const pokemon = pokemonData.find((p) => String(p.id) === String(id));
-      const species = speciesData.find((s) => String(s.id) === String(id));
       const flavorText = (
         speciesFlavorData.find((rec) => String(rec.species_id) === String(id))
           ?.flavor_text || "No description."
@@ -146,7 +195,8 @@ const generatePaginatedPokemonList = async ({
           typesData.find(
             (type) => String(type.id) === String(typeAssoc.type_id),
           ),
-        );
+        )
+        .map((type) => type.identifier);
 
       payload.pokemon.push({
         id: pokemon.id,
@@ -154,26 +204,121 @@ const generatePaginatedPokemonList = async ({
         slug: pokemon.identifier,
         flavorText,
         colorPalette: trimColorPalette({ colorPalette }),
-        types: types.map((type) => ({
-          slug: type.identifier,
-          name: capitalize(type.identifier),
-        })),
+        types,
       });
     }
 
     await fse.writeJson(
-      path.join(OUTPUT_DIR, "pokemon", `${page}.json`),
+      path.join(OUTPUT_DIR, "pokemon/list", `${page}.json`),
       payload,
     );
   }
+};
+
+const generateIndividualPokemonPayloads = async ({
+  pokemonData,
+  pokemonTypesData,
+  typesData,
+  speciesFlavorData,
+  statsData,
+  pokemonStatsData,
+  damageFactorData,
+}) => {
+  await fse.ensureDir(path.join(OUTPUT_DIR, "pokemon/details"));
+  await fse.emptyDir(path.join(OUTPUT_DIR, "pokemon/details"));
+
+  const promises = pokemonData.map((pokemon) => {
+    return new Promise(async (resolve) => {
+      try {
+        const flavorText = (
+          speciesFlavorData.find(
+            (rec) => String(rec.species_id) === String(pokemon.id),
+          )?.flavor_text || "No description."
+        ).replace(/[\n\r\f]/g, " ");
+        const colorPalette = pokemonColorPalettes[pokemon.id];
+        const types = pokemonTypesData
+          .filter(
+            (typeAssoc) => String(typeAssoc.pokemon_id) === String(pokemon.id),
+          )
+          .map((typeAssoc) =>
+            typesData.find(
+              (type) => String(type.id) === String(typeAssoc.type_id),
+            ),
+          )
+          .map((type) => type.identifier);
+        const typeIds = pokemonTypesData
+          .filter(
+            (typeAssoc) => String(typeAssoc.pokemon_id) === String(pokemon.id),
+          )
+          .map((typeAssoc) => typeAssoc.type_id);
+
+        const stats = pokemonStatsData
+          .filter((stat) => stat.pokemon_id == pokemon.id)
+          .map((stat) => {
+            const statDetail = statsData.find((dat) => dat.id == stat.stat_id);
+
+            return {
+              base: stat.base_stat,
+              name: statDetail.identifier
+                .split("-")
+                .map(capitalize)
+                .join(" ")
+                .replace(/^hp$/i, "HP")
+                .replace(/special/i, "Sp."),
+            };
+          });
+        const previousPokemon = pokemonData.find(
+          (p) => Number(p.id) === Number(pokemon.id) - 1,
+        );
+        const nextPokemon = pokemonData.find(
+          (p) => Number(p.id) === Number(pokemon.id) + 1,
+        );
+
+        // TODO: All damage relations for the given pokemon
+        const damageFactors = [];
+
+        const payload = {
+          id: pokemon.id,
+          name: capitalize(pokemon.identifier),
+          types,
+          height: Math.round((parseInt(pokemon.height) / 3.048) * 100) / 100, // Feet
+          weight: Math.round((parseInt(pokemon.weight) / 4.536) * 100) / 100, // Lbs
+          stats,
+          previousPokemon: previousPokemon?.identifier || "",
+          nextPokemon: nextPokemon?.identifier || "",
+          flavorText,
+          colorPalette: trimColorPalette({ colorPalette }),
+          // damageFactors,
+          // TODO: evolution chain
+        };
+
+        await fse.writeJson(
+          path.join(
+            OUTPUT_DIR,
+            "pokemon/details",
+            `${pokemon.identifier}.json`,
+          ),
+          payload,
+        );
+      } finally {
+        resolve();
+      }
+    }).catch(console.log);
+  });
+
+  await Promise.all(promises);
 };
 
 /**
  * Remove crap we don't need from color palette
  */
 const trimColorPalette = ({ colorPalette }) => {
+  if (!colorPalette) return {};
+
   return Object.entries(colorPalette).reduce((acc, [key, value]) => {
-    acc[key] = value?.rgb || undefined;
+    if (value) {
+      acc[key] = value?.rgb || undefined;
+    }
     return acc;
   }, {});
 };
