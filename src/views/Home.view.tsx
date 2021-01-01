@@ -5,21 +5,24 @@ import { $api } from "../$api";
 import { FetchPokemonListDTO } from "../dto/FetchPokemonList.dto";
 import { Link } from "react-router-dom";
 import { PokeListCard } from "../components/PokeListCard";
+import { useInView } from "react-intersection-observer";
 
 type HomeViewProps = {};
 
 export const HomeView: React.FC<HomeViewProps> = () => {
-  const { data, status, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-    QUERY_CACHE_KEYS.POKE_LIST,
-    $api.fetchPokemonList,
-    {
-      getNextPageParam: (lastPage, pages) => {
-        return lastPage.pageInfo.page < lastPage.pageInfo.totalNumPages
-          ? lastPage.pageInfo?.page + 1
-          : false;
-      },
+  const {
+    data,
+    status,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(QUERY_CACHE_KEYS.POKE_LIST, $api.fetchPokemonList, {
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.pageInfo.page < lastPage.pageInfo.totalNumPages
+        ? lastPage.pageInfo?.page + 1
+        : undefined;
     },
-  );
+  });
 
   // Aggregated pokemon
   const pokemon = React.useMemo(
@@ -30,6 +33,13 @@ export const HomeView: React.FC<HomeViewProps> = () => {
       ),
     [data?.pages],
   );
+
+  const { inView, ref } = useInView();
+  React.useEffect(() => {
+    if (inView && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView, isFetchingNextPage]);
 
   if (status === "loading") {
     return (
@@ -104,8 +114,12 @@ export const HomeView: React.FC<HomeViewProps> = () => {
           Fetch more!
         </button>
       </div>
+      {isFetchingNextPage && (
+        <div>
+          <div className="text-2xl">LOADING MORE</div>
+        </div>
+      )}
+      {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
     </div>
   );
-
-  return <p>Home view!</p>;
 };
