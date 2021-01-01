@@ -7,13 +7,14 @@ const pokemonColorPalettes = require("./data/pokemon-colors");
 // Config
 const NUM_POKEMON =
   {
+    one: 1,
     starters: 9,
     gen1: 151,
     gen2: 251,
     gen3: 384,
     gen4: 491,
     gen5: 649,
-  }["gen5"] || 9;
+  }["gen1"] || 9;
 const DATA_DIR = path.join(__dirname, "data/csv");
 const OUTPUT_DIR = path.join(__dirname, "../public/data");
 
@@ -290,7 +291,26 @@ const generateIndividualPokemonPayloads = async ({
         );
 
         // TODO: All damage relations for the given pokemon
-        const damageFactors = [];
+        const weaknesses = (() => {
+          const weaknesses = [];
+
+          for (let type of typesData) {
+            const aggFactor = damageFactorData
+              .filter(
+                (assoc) =>
+                  String(assoc.damage_type_id) === String(type.id) &&
+                  typeIds.includes(assoc.target_type_id),
+              )
+              .map((assoc) => Number(assoc.damage_factor) / 100)
+              .reduce((acc, x) => acc * x, 1);
+
+            if (aggFactor > 1) {
+              weaknesses.push({ slug: type.identifier, factor: aggFactor });
+            }
+          }
+
+          return weaknesses;
+        })();
 
         const payload = {
           id: pokemon.id,
@@ -303,7 +323,7 @@ const generateIndividualPokemonPayloads = async ({
           nextPokemon: nextPokemon?.identifier || "",
           flavorText,
           colorPalette: trimColorPalette({ colorPalette }),
-          // damageFactors,
+          weaknesses,
           // TODO: evolution chain
         };
 

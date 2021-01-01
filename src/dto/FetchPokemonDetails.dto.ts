@@ -9,6 +9,7 @@ export interface FetchPokemonDetailsDTO {
   nextPokemon: string;
   flavorText: string;
   colorPalette: ColorPalette;
+  weaknesses: { slug: string; factor: number }[];
 }
 
 interface ColorPalette {
