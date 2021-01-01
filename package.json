@@ -50,7 +50,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:css": "NODE_ENV=production PUBLIC_URL=https://pokedex.gksander.com postcss src/styles/tailwind.css -o src/styles/index.css",
-    "watch:css": "NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch"
+    "watch:css": "NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "eslintConfig": {
     "extends": [

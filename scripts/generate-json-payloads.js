@@ -42,10 +42,6 @@ module.exports = async () => {
         path.join(DATA_DIR, "pokemon_species_flavor_text.csv"),
       )
     ).filter((dat) => parseInt(dat.species_id) <= NUM_POKEMON);
-    // The colors of pokemon
-    const pokemonColorsData = await csv().fromFile(
-      path.join(DATA_DIR, "pokemon_colors.csv"),
-    );
     // Pokemon themselves
     const pokemonData = (
       await csv().fromFile(path.join(DATA_DIR, "pokemon.csv"))
@@ -60,10 +56,6 @@ module.exports = async () => {
     const pokemonStatsData = (
       await csv().fromFile(path.join(DATA_DIR, "pokemon_stats.csv"))
     ).filter((dat) => parseInt(dat.pokemon_id) <= NUM_POKEMON);
-    // Evolution chains
-    const evolutionChainsData = await csv().fromFile(
-      path.join(DATA_DIR, "evolution_chains.csv"),
-    );
 
     // Pokemon
     await generatePaginatedPokemonList({
@@ -271,9 +263,11 @@ const generateIndividualPokemonPayloads = async ({
           .map((typeAssoc) => typeAssoc.type_id);
 
         const stats = pokemonStatsData
-          .filter((stat) => stat.pokemon_id == pokemon.id)
+          .filter((stat) => String(stat.pokemon_id) === String(pokemon.id))
           .map((stat) => {
-            const statDetail = statsData.find((dat) => dat.id == stat.stat_id);
+            const statDetail = statsData.find(
+              (dat) => String(dat.id) === String(stat.stat_id),
+            );
 
             return {
               base: stat.base_stat,
