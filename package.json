@@ -27,8 +27,9 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"yarn watch:css\"",
-    "build": "yarn build:css && yarn react-scripts build",
+    "generate-json": "node ./scripts/generate-json-payloads.js",
+    "start": "yarn generate-json && concurrently \"react-scripts start\" \"yarn watch:css\"",
+    "build": "yarn generate-json && yarn build:css && yarn react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:css": "NODE_ENV=production PUBLIC_URL=https://gif-maker.gksander.com postcss src/styles/tailwind.css -o src/styles/index.css",
