@@ -6,6 +6,7 @@ import { $api } from "../$api";
 import { setBackgroundColor } from "../utils/setBackgroundColor";
 import { PokeTypeChip } from "../components/PokeTypeChip";
 import {
+  FaChevronDown,
   FaChevronLeft,
   FaChevronRight,
   FaRuler,
@@ -15,6 +16,7 @@ import { FetchPokemonDetailsDTO } from "../dto/FetchPokemonDetails.dto";
 import { PokeImg } from "../components/PokeImg";
 import { PokeStatChart } from "../components/PokeStatChart";
 import { useKey } from "react-use";
+import classNames from "classnames";
 
 type PokemonDetailsViewProps = {};
 
@@ -29,6 +31,7 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
   const bgColor = useBackgroundColor({ data });
   useSetBackgroundColor(bgColor);
 
+  // TODO: Remove this eventually, use skeleton
   if (status === "loading") {
     return (
       <div>
@@ -125,14 +128,75 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
               </div>
             </div>
           </div>
-          {/* S TODO: Evolutions */}
-          <div className="sm:col-span-3 flex flex-col">
-            <div className="text-xl font-bold mb-4">Evolutions</div>
-          </div>
+          <EvolutionChain data={data} />
         </div>
         <div className="mb-12" />
         {/* Links */}
         <BottomLinks data={data} />
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Evolution chain UI
+ */
+const EV_SIZE = "100px";
+const EvolutionChain: React.FC<{ data?: FetchPokemonDetailsDTO }> = ({
+  data,
+}) => {
+  if ((data?.evolutionChain?.length || 0) <= 1) return null;
+
+  const buckets = data?.evolutionChain || [];
+
+  return (
+    <div className="sm:col-span-3 flex flex-col">
+      <div className="text-xl font-bold mb-4">Evolutions</div>
+      <div className="flex gap-2 flex-col sm:flex-row items-center flex-grow">
+        {buckets.map((bucket, i) => (
+          <React.Fragment key={i}>
+            <div
+              style={{ width: EV_SIZE, height: EV_SIZE }}
+              className="overflow-y-auto overflow-x-hidden grid gap-2"
+            >
+              {bucket.map((item, j) => (
+                <Link
+                  to={`/${item.slug}`}
+                  className="block relative transition-all duration-300 flex flex-col evLink"
+                  style={{
+                    width: EV_SIZE,
+                    height: EV_SIZE,
+                  }}
+                  key={j}
+                >
+                  <div className="flex-grow relative">
+                    <div className="absolute inset-0 evImg transition-all duration-200">
+                      <PokeImg {...item} />
+                    </div>
+                  </div>
+                  <div
+                    className={classNames(
+                      "text-center text-gray-700 overflow-hidden whitespace-no-wrap",
+                      item.slug === data?.slug && "font-bold text-gray-900",
+                    )}
+                    style={{
+                      maxWidth: EV_SIZE,
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {item.slug}
+                  </div>
+                </Link>
+              ))}
+            </div>
+            {i < buckets.length - 1 && (
+              <div className="flex p-2 items-center">
+                <FaChevronRight className="hidden sm:block" />
+                <FaChevronDown className="block sm:hidden" />
+              </div>
+            )}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );

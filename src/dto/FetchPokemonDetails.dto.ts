@@ -10,6 +10,7 @@ export interface FetchPokemonDetailsDTO {
   flavorText: string;
   colorPalette: ColorPalette;
   weaknesses: { slug: string; factor: number }[];
+  evolutionChain: Array<EvolutionChainItem[]>;
 }
 
 interface ColorPalette {
@@ -24,4 +25,9 @@ interface ColorPalette {
 interface Stat {
   base: string;
   name: string;
+}
+
+export interface EvolutionChainItem {
+  id: string;
+  slug: string;
 }
