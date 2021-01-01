@@ -13,7 +13,7 @@ const NUM_POKEMON =
     gen3: 384,
     gen4: 491,
     gen5: 649,
-  }["gen1"] || 9;
+  }["gen5"] || 9;
 const DATA_DIR = path.join(__dirname, "data/csv");
 const OUTPUT_DIR = path.join(__dirname, "../public/data");
 
@@ -88,6 +88,7 @@ module.exports = async () => {
       typesData,
       pokemonTypesData,
       pokemonData,
+      damageFactorData,
     });
   } catch (err) {
     console.log(err);
@@ -113,6 +114,7 @@ const generateIndividualTypePayloads = async ({
   typesData,
   pokemonTypesData,
   pokemonData,
+  damageFactorData,
 }) => {
   await fse.ensureDir(path.join(OUTPUT_DIR, "types"));
 
@@ -129,7 +131,22 @@ const generateIndividualTypePayloads = async ({
                 pokemonData.find((p) => String(p.id) === String(id))
                   ?.identifier || undefined,
             ),
-          // TODO: damage factors
+          efficacyTo: damageFactorData
+            .filter((assoc) => String(assoc.damage_type_id) === String(type.id))
+            .map((assoc) => ({
+              type: typesData.find(
+                (t) => String(t.id) === String(assoc.target_type_id),
+              )?.identifier,
+              factor: Number(assoc.damage_factor),
+            })),
+          efficacyFrom: damageFactorData
+            .filter((assoc) => String(assoc.target_type_id) === String(type.id))
+            .map((assoc) => ({
+              type: typesData.find(
+                (t) => String(t.id) === String(assoc.damage_type_id),
+              )?.identifier,
+              factor: Number(assoc.damage_factor),
+            })),
         };
 
         await fse.writeJson(
