@@ -33,6 +33,7 @@ export const SearchView: React.FC<SearchViewProps> = () => {
           <Link
             to={`/${p.slug}`}
             className="block p-3 flex items-center hover:bg-primary-100 transition-colors duration-150"
+            key={p.slug}
           >
             <div className="flex-grow flex items-center">
               <div className="w-8 mr-3">

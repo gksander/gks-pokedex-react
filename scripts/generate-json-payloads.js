@@ -75,6 +75,7 @@ module.exports = async () => {
     await generateIndividualPokemonPayloads({
       pokemonData,
       pokemonTypesData,
+      speciesData,
       typesData,
       speciesFlavorData,
       statsData,
@@ -233,6 +234,7 @@ const generatePaginatedPokemonList = async ({
 
 const generateIndividualPokemonPayloads = async ({
   pokemonData,
+  speciesData,
   pokemonTypesData,
   typesData,
   speciesFlavorData,
@@ -290,7 +292,6 @@ const generateIndividualPokemonPayloads = async ({
           (p) => Number(p.id) === Number(pokemon.id) + 1,
         );
 
-        // TODO: All damage relations for the given pokemon
         const weaknesses = (() => {
           const weaknesses = [];
 
@@ -312,6 +313,44 @@ const generateIndividualPokemonPayloads = async ({
           return weaknesses;
         })();
 
+        const evolutionChain = (() => {
+          const getSlimDetails = (species) => ({
+            id: species.id,
+            slug: species.identifier,
+          });
+          const species = speciesData.find(
+            (s) => String(s.id) === String(pokemon.id),
+          );
+          const evChainId = species.evolution_chain_id;
+
+          const speciesInChain = speciesData.filter(
+            (s) => String(s.evolution_chain_id) === evChainId,
+          );
+
+          const firstSpecies = speciesInChain.find((s) => !s.evolves_from);
+          if (!firstSpecies) return [];
+
+          const buckets = [[getSlimDetails(firstSpecies)]];
+
+          let areDone = false;
+          while (!areDone) {
+            const lastBucket = buckets[buckets.length - 1];
+            const lastBucketIds = lastBucket.map((dat) => dat.id);
+
+            const newBucket = speciesInChain
+              .filter((s) => lastBucketIds.includes(s.evolves_from_species_id))
+              .map(getSlimDetails);
+
+            if (!newBucket.length) {
+              areDone = true;
+            } else {
+              buckets.push(newBucket);
+            }
+          }
+
+          return buckets;
+        })();
+
         const payload = {
           id: pokemon.id,
           slug: pokemon.identifier,
@@ -324,7 +363,7 @@ const generateIndividualPokemonPayloads = async ({
           flavorText,
           colorPalette: trimColorPalette({ colorPalette }),
           weaknesses,
-          // TODO: evolution chain
+          evolutionChain,
         };
 
         await fse.writeJson(

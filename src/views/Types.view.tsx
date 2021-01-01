@@ -24,7 +24,7 @@ export const TypesView: React.FC<TypesViewProps> = () => {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {(data || []).map((type) => (
-            <PokeTypeChip slug={type.slug} isBlock />
+            <PokeTypeChip slug={type.slug} isBlock key={type.slug} />
           ))}
         </div>
       )}
