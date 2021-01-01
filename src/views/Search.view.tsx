@@ -7,6 +7,7 @@ import { PokeImg } from "../components/PokeImg";
 import { FaChevronRight } from "react-icons/all";
 import { useTitle } from "react-use";
 import { ViewWrapper } from "../components/ViewWrapper";
+import { motion } from "framer-motion";
 
 type SearchViewProps = {};
 
@@ -16,7 +17,7 @@ export const SearchView: React.FC<SearchViewProps> = () => {
 
   const [query, setQuery] = React.useState("");
   const filteredPokemon = React.useMemo(() => {
-    const reg = new RegExp(query, "i");
+    const reg = new RegExp(query.replace(/W/i, ""), "i");
     return (data || []).filter((p) => reg.test(p.slug)).slice(0, 10);
   }, [data, query]);
 
@@ -24,7 +25,7 @@ export const SearchView: React.FC<SearchViewProps> = () => {
     <ViewWrapper>
       <div className="container max-w-2xl px-2 py-6">
         <div className="text-5xl font-fancy mb-6">Search for a Pokemon</div>
-        <div className="border-2 border-gray-800 rounded">
+        <div className="border-2 border-gray-800 rounded overflow-hidden">
           <input
             type="text"
             className="p-3 w-full text-xl outline-none"
@@ -33,29 +34,31 @@ export const SearchView: React.FC<SearchViewProps> = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          {filteredPokemon.map((p) => (
-            <Link
-              to={`/${p.slug}`}
-              className="block p-3 flex items-center hover:bg-primary-100 transition-colors duration-150"
-              key={p.slug}
-            >
-              <div className="flex-grow flex items-center">
-                <div className="w-8 mr-3">
-                  <div className="w-full">
-                    <PokeImg
-                      slug={p.slug}
-                      id={p.id}
-                      imgClassName="w-full h-full object-contain"
-                    />
+          <motion.div animate={{ height: "auto" }}>
+            {filteredPokemon.map((p) => (
+              <Link
+                to={`/${p.slug}`}
+                className="block p-3 flex items-center hover:bg-primary-100 transition-colors duration-150"
+                key={p.slug}
+              >
+                <div className="flex-grow flex items-center">
+                  <div className="w-8 mr-3">
+                    <div className="w-full">
+                      <PokeImg
+                        slug={p.slug}
+                        id={p.id}
+                        imgClassName="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
+                  <div className="font-bold text-gray-700 capitalize">
+                    #{p.id} - {p.slug}
                   </div>
                 </div>
-                <div className="font-bold text-gray-700 capitalize">
-                  #{p.id} - {p.slug}
-                </div>
-              </div>
-              <FaChevronRight />
-            </Link>
-          ))}
+                <FaChevronRight />
+              </Link>
+            ))}
+          </motion.div>
         </div>
       </div>
     </ViewWrapper>
