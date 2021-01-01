@@ -110,8 +110,6 @@ const AppBody: React.FC = () => {
   );
 };
 
-const MotionLink = motion.custom(NavLink);
-
 const LINKS = [
   {
     title: "Search",

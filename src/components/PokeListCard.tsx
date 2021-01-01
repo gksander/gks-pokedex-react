@@ -5,7 +5,6 @@ import { PokeImg } from "./PokeImg";
 import { PokeTypeChip } from "./PokeTypeChip";
 import { FetchPokemonListDTO } from "../dto/FetchPokemonList.dto";
 import { FetchPokemonDetailsDTO } from "../dto/FetchPokemonDetails.dto";
-import classNames from "classnames";
 import Skeleton from "react-loading-skeleton";
 import { useQuery } from "react-query";
 import { $api } from "../$api";
