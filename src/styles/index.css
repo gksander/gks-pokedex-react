@@ -30892,6 +30892,11 @@ video {
 
 /* Your own custom utilities */
 
+html, body {
+  font-family: "Kalam", sans-serif;
+  font-size: 18px;
+}
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;
@@ -182391,3 +182396,4 @@ video {
     animation: bounce 1s infinite;
   }
 }
+

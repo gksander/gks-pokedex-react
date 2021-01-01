@@ -1,5 +1,11 @@
 import * as React from "react";
-import { BrowserRouter, NavLink, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter,
+  NavLink,
+  Route,
+  Switch,
+  useLocation,
+} from "react-router-dom";
 import classNames from "classnames";
 import { Pokeball } from "./components/Pokeball";
 import { ROUTES } from "./routes";
@@ -9,69 +15,77 @@ import { SearchView } from "./views/Search.view";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { PokemonDetailsView } from "./views/ PokemonDetails.view";
 import { TypeDetailsView } from "./views/TypeDetails.view";
+import { setBackgroundColor } from "./utils/setBackgroundColor";
 
 export const App: React.FC = () => {
-  const shouldShowHeaderShadow = false;
-
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <div
-          style={{
-            backgroundColor: "var(--background-color, white)",
-          }}
-          className="min-h-screen transition-colors duration-150"
-        >
-          <header
-            className={classNames(
-              "p-2 transition-all duration-150 sticky top-0 z-10",
-              shouldShowHeaderShadow && ["shadow"],
-            )}
-            style={{
-              backgroundColor: "var(--background-color, white)",
-            }}
-          >
-            <div className="container max-w-2xl flex flex-row justify-between items-center">
-              <NavLink
-                to="/"
-                className="flex items-center text-primary-800 px-3 py-2 rounded border-2 border-transparent hover:border-primary-800 transition-colors duration-150 homeLink"
-                activeClassName="border-primary-800"
-                exact
-              >
-                <div className="w-6 mr-2">
-                  <Pokeball className="pokeball transition-all duration-300" />
-                </div>
-                <span className="font-bold text-lg">Pokedex</span>
-              </NavLink>
-              <div>
-                {LINKS.map((link) => (
-                  <NavLink
-                    key={link.to}
-                    to={link.to}
-                    className="px-3 py-2 text-primary-800 font-bold rounded transition-colors duration-150 border-2 border-transparent hover:border-primary-800"
-                    exact
-                    activeClassName="border-primary-800"
-                  >
-                    {link.title}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          </header>
-          <main className="py-6 px-2">
-            <div className="container max-w-2xl">
-              <Switch>
-                <Route path={ROUTES.SEARCH} component={SearchView} />
-                <Route path={`/types/:typeSlug`} component={TypeDetailsView} />
-                <Route path={ROUTES.TYPES} component={TypesView} />
-                <Route path={`/:pokemonSlug`} component={PokemonDetailsView} />
-                <Route path={ROUTES.HOME} component={HomeView} />
-              </Switch>
-            </div>
-          </main>
-        </div>
+        <AppBody />
       </BrowserRouter>
     </QueryClientProvider>
+  );
+};
+
+const AppBody: React.FC = () => {
+  const shouldShowHeaderShadow = useShouldShowShadowHeader();
+  useResetBgColorIfNecessary();
+
+  return (
+    <div
+      style={{
+        backgroundColor: "var(--background-color, white)",
+      }}
+      className="min-h-screen transition-colors duration-150"
+    >
+      <header
+        className={classNames(
+          "p-2 transition-all duration-150 sticky top-0 z-10",
+          shouldShowHeaderShadow && ["shadow"],
+        )}
+        style={{
+          backgroundColor: "var(--background-color, white)",
+        }}
+      >
+        <div className="container max-w-2xl flex flex-row justify-between items-center">
+          <NavLink
+            to="/"
+            className="flex items-center text-primary-800 px-3 py-2 rounded border-2 border-transparent hover:border-primary-800 transition-colors duration-150 homeLink"
+            activeClassName="border-primary-800"
+            exact
+          >
+            <div className="w-6 mr-2">
+              <Pokeball className="pokeball transition-all duration-300" />
+            </div>
+            <span className="font-bold text-lg">Pokedex</span>
+          </NavLink>
+          <div>
+            {LINKS.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className="px-3 py-2 text-primary-800 font-bold rounded transition-colors duration-150 border-2 border-transparent hover:border-primary-800"
+                exact
+                activeClassName="border-primary-800"
+              >
+                {link.title}
+              </NavLink>
+            ))}
+          </div>
+        </div>
+      </header>
+      <main className="py-6 px-2">
+        <div className="container max-w-2xl">
+          <Switch>
+            <Route path={ROUTES.SEARCH} component={SearchView} />
+            <Route path={`/types/:typeSlug`} component={TypeDetailsView} />
+            <Route path={ROUTES.TYPES} component={TypesView} />
+            <Route path={`/:pokemonSlug`} component={PokemonDetailsView} />
+            <Route path={ROUTES.HOME} component={HomeView} />
+          </Switch>
+        </div>
+      </main>
+    </div>
   );
 };
 
@@ -94,3 +108,31 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+/**
+ * Handle header shadow visibility
+ */
+const useShouldShowShadowHeader = () => {
+  const [shouldShow, setShouldShow] = React.useState(false);
+
+  React.useEffect(() => {
+    const handler = () => setShouldShow(window.scrollY > 0);
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
+  });
+
+  return shouldShow;
+};
+
+const useResetBgColorIfNecessary = () => {
+  const pathname = useLocation().pathname;
+
+  React.useEffect(() => {
+    if (
+      [ROUTES.HOME, ROUTES.SEARCH].includes(pathname) ||
+      pathname.startsWith("/types")
+    ) {
+      setBackgroundColor("white");
+    }
+  }, [pathname]);
+};

@@ -4,6 +4,7 @@ import { QUERY_CACHE_KEYS } from "../consts";
 import { $api } from "../$api";
 import { FetchPokemonListDTO } from "../dto/FetchPokemonList.dto";
 import { Link } from "react-router-dom";
+import { PokeListCard } from "../components/PokeListCard";
 
 type HomeViewProps = {};
 
@@ -40,13 +41,70 @@ export const HomeView: React.FC<HomeViewProps> = () => {
 
   return (
     <div>
-      {pokemon.map((p) => (
-        <div key={p.id} className="border-2 mb-4 p-4">
-          <Link className="font-bold" to={`/${p.slug}`}>
-            {p.slug}
-          </Link>
+      <div className="mb-12">
+        <div className="text-5xl font-fancy">Grant's Pokedex</div>
+        <div>
+          A list of all pokemon (through generation 5), proudly powered by{" "}
+          <a
+            href="https://github.com/PokeAPI/pokeapi"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary-800"
+          >
+            the Open PokeAPI
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://veekun.com"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary-800"
+          >
+            Veekun.
+          </a>
+          . Built with{" "}
+          <a
+            href="https://gridsome.org/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary-800"
+          >
+            Gridsome.js
+          </a>{" "}
+          and styled with the almighty{" "}
+          <a
+            href="https://tailwindcss.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary-800"
+          >
+            TailwindCSS
+          </a>
+          . Check out{" "}
+          <a
+            href="https://github.com/gksander/gks-pokedex-gridsome"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary-800"
+          >
+            the source code
+          </a>{" "}
+          on GitHub. This is a pet project, and I claim no commercial or
+          intellectual rights to any of the Pokemon-specific resources (such as
+          data or images) used here.
         </div>
-      ))}
+      </div>
+      <div className="grid gap-16">
+        {pokemon.map((p) => (
+          <PokeListCard
+            key={p.id}
+            id={p.id}
+            slug={p.slug}
+            types={p.types}
+            flavorText={p.flavorText}
+          />
+        ))}
+      </div>
       <div>
         <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
           Fetch more!

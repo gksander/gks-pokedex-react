@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "react-query";
 import { $api } from "../$api";
+import { setBackgroundColor } from "../utils/setBackgroundColor";
 
 type PokemonDetailsViewProps = {};
 
@@ -25,6 +26,12 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
       );
     }
   }, [data, queryClient]);
+
+  React.useEffect(() => {
+    if (data) {
+      setBackgroundColor("blue");
+    }
+  }, [data]);
 
   if (status === "loading") {
     return (

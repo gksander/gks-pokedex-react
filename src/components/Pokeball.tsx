@@ -3,13 +3,13 @@ import { SVGProps } from "react";
 
 type PokeballProps = SVGProps<any>;
 
-export const Pokeball: React.FC<PokeballProps> = ({ className = "" }) => {
+export const Pokeball: React.FC<PokeballProps> = (props) => {
   return (
     <svg
       width="100%"
       viewBox="0 0 326 327"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      {...props}
     >
       <path
         fillRule="evenodd"

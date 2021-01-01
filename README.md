@@ -1,7 +1,7 @@
 # IN PROGRESS
 
 ## TODO:
-- [ ] Header shadow on scroll
+- [ ] Header pokeball rotate
 - [ ] Home page
 - [ ] Search page
 - [ ] Types page
