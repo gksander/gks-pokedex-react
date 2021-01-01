@@ -13,6 +13,7 @@ import {
 } from "react-icons/all";
 import { FetchPokemonDetailsDTO } from "../dto/FetchPokemonDetails.dto";
 import { PokeImg } from "../components/PokeImg";
+import { PokeStatChart } from "../components/PokeStatChart";
 
 type PokemonDetailsViewProps = {};
 
@@ -22,14 +23,10 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
     $api.fetchPokemonDetails({ slug: pokemonSlug }),
   );
 
-  const numberColor = React.useMemo(() => {
-    const [r, g, b] = data?.colorPalette?.LightVibrant ||
-      data?.colorPalette?.Vibrant ||
-      data?.colorPalette?.LightMuted || [200, 200, 200];
-
-    return `rgb(${r}, ${g}, ${b})`;
-  }, [data]);
-  useSetBackgroundColor({ data });
+  // Colors
+  const color = useColor({ data });
+  const bgColor = useBackgroundColor({ data });
+  useSetBackgroundColor(bgColor);
 
   if (status === "loading") {
     return (
@@ -62,7 +59,7 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
               <div
                 className="absolute left-0 bottom-0 text-6xl text-gray-700 font-fancy font-thin"
                 style={{
-                  color: numberColor,
+                  color,
                   filter: `drop-shadow(2px 2px 2px rgba(50, 50, 50, 0.8))`,
                 }}
               >
@@ -111,8 +108,28 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
           </div>
         </div>
         <div className="mb-12" />
-        {/* S TODO: Stats/evolutions */}
-        <div className="grid sm:grid-cols-4 gap-12" />
+        <div className="grid sm:grid-cols-4 gap-12">
+          <div>
+            <div className="text-xl font-bold mb-4">Stats</div>
+            <div className="w-32 mx-auto">
+              <div className="w-full relative" style={{ paddingTop: "100%" }}>
+                <div className="absolute inset-0 text-gray-700">
+                  {data?.stats?.length && (
+                    <PokeStatChart
+                      stats={data.stats}
+                      color={color}
+                      bgColor={bgColor}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* S TODO: Evolutions */}
+          <div className="sm:col-span-3 flex flex-col">
+            <div className="text-xl font-bold mb-4">Evolutions</div>
+          </div>
+        </div>
         <div className="mb-12" />
         {/* Links */}
         <BottomLinks data={data} />
@@ -171,8 +188,18 @@ const BottomLinks: React.FC<{ data?: FetchPokemonDetailsDTO }> = ({ data }) => {
   );
 };
 
-const useSetBackgroundColor = ({ data }: { data?: FetchPokemonDetailsDTO }) => {
-  const bgColor = React.useMemo(() => {
+const useColor = ({ data }: { data?: FetchPokemonDetailsDTO }) => {
+  return React.useMemo(() => {
+    const [r, g, b] = data?.colorPalette?.LightVibrant ||
+      data?.colorPalette?.Vibrant ||
+      data?.colorPalette?.LightMuted || [200, 200, 200];
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }, [data]);
+};
+
+const useBackgroundColor = ({ data }: { data?: FetchPokemonDetailsDTO }) => {
+  return React.useMemo(() => {
     if (!data) return "";
 
     const [r, g, b] = data?.colorPalette?.LightVibrant ||
@@ -181,7 +208,9 @@ const useSetBackgroundColor = ({ data }: { data?: FetchPokemonDetailsDTO }) => {
 
     return tinycolor.mix(`rgb(${r}, ${g}, ${b})`, "white", 80).toRgbString();
   }, [data]);
+};
 
+const useSetBackgroundColor = (bgColor = "") => {
   React.useEffect(() => {
     if (bgColor) {
       setBackgroundColor(bgColor);
