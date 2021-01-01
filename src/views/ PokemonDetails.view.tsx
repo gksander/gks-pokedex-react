@@ -96,12 +96,11 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
             </div>
             {/*	Description */}
             <div className="text-gray-800 mb-4">{data?.flavorText}</div>
-            {/* S TODO: Weaknesses */}
             <div className="text-xl font-bold">Weaknesses</div>
             <div className="flex flex-wrap">
-              {["normal"].map((slug) => (
-                <div className="mr-1 mb-1">
-                  <PokeTypeChip slug={slug} isSmall isStarred={true} />
+              {(data?.weaknesses || []).map(({ factor, slug }) => (
+                <div className="mr-1 mb-1" key={`${pokemonSlug}-slug`}>
+                  <PokeTypeChip slug={slug} isSmall isStarred={factor > 2} />
                 </div>
               ))}
             </div>
