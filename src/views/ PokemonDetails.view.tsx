@@ -25,7 +25,7 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
   const { pokemonSlug } = useParams<{ pokemonSlug: string }>();
   useTitle(`Pokemon: ${pokemonSlug}`);
 
-  const { isLoading, data } = useQuery(pokemonSlug, () =>
+  const { data } = useQuery(pokemonSlug, () =>
     $api.fetchPokemonDetails({ slug: pokemonSlug }),
   );
 
