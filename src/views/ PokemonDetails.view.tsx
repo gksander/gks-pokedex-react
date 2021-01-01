@@ -25,7 +25,7 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
   const { pokemonSlug } = useParams<{ pokemonSlug: string }>();
   useTitle(`Pokemon: ${pokemonSlug}`);
 
-  const { status, data } = useQuery(pokemonSlug, () =>
+  const { isLoading, data } = useQuery(pokemonSlug, () =>
     $api.fetchPokemonDetails({ slug: pokemonSlug }),
   );
 
@@ -34,14 +34,9 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
   const bgColor = useBackgroundColor({ data });
   useSetBackgroundColor(bgColor);
 
-  // TODO: Remove this eventually, use skeleton
-  if (status === "loading") {
-    return (
-      <div>
-        <p>LOADING!</p>
-      </div>
-    );
-  }
+  React.useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [pokemonSlug]);
 
   return (
     <ViewWrapper>
