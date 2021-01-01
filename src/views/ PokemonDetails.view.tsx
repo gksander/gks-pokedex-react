@@ -15,13 +15,16 @@ import {
 import { FetchPokemonDetailsDTO } from "../dto/FetchPokemonDetails.dto";
 import { PokeImg } from "../components/PokeImg";
 import { PokeStatChart } from "../components/PokeStatChart";
-import { useKey } from "react-use";
+import { useKey, useTitle } from "react-use";
 import classNames from "classnames";
+import { ViewWrapper } from "../components/ViewWrapper";
 
 type PokemonDetailsViewProps = {};
 
 export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
   const { pokemonSlug } = useParams<{ pokemonSlug: string }>();
+  useTitle(`Pokemon: ${pokemonSlug}`);
+
   const { status, data } = useQuery(pokemonSlug, () =>
     $api.fetchPokemonDetails({ slug: pokemonSlug }),
   );
@@ -41,100 +44,102 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
   }
 
   return (
-    <div>
-      <div className="container max-w-2xl py-6 px-2">
-        <div className="grid sm:grid-cols-2 gap-12">
-          {/* S TODO: Image */}
-          <div>
-            <div
-              className="w-3/4 sm:w-full relative mx-auto"
-              style={{ paddingTop: "100%" }}
-            >
-              <div className="absolute inset-0">
-                <PokeImg
-                  slug={data?.slug || ""}
-                  id={data?.id || ""}
-                  imgClassName="w-full h-full object-contain"
-                  imgStyle={{
-                    filter: "drop-shadow(2px 2px 2px rgba(50, 50, 50, 0.8))",
-                  }}
-                />
-              </div>
+    <ViewWrapper>
+      <div>
+        <div className="container max-w-2xl py-6 px-2">
+          <div className="grid sm:grid-cols-2 gap-12">
+            {/* S TODO: Image */}
+            <div>
               <div
-                className="absolute left-0 bottom-0 text-6xl text-gray-700 font-fancy font-thin"
-                style={{
-                  color,
-                  filter: `drop-shadow(2px 2px 2px rgba(50, 50, 50, 0.8))`,
-                }}
+                className="w-3/4 sm:w-full relative mx-auto"
+                style={{ paddingTop: "100%" }}
               >
-                #{data?.id}
+                <div className="absolute inset-0">
+                  <PokeImg
+                    slug={data?.slug || ""}
+                    id={data?.id || ""}
+                    imgClassName="w-full h-full object-contain"
+                    imgStyle={{
+                      filter: "drop-shadow(2px 2px 2px rgba(50, 50, 50, 0.8))",
+                    }}
+                  />
+                </div>
+                <div
+                  className="absolute left-0 bottom-0 text-6xl text-gray-700 font-fancy font-thin"
+                  style={{
+                    color,
+                    filter: `drop-shadow(2px 2px 2px rgba(50, 50, 50, 0.8))`,
+                  }}
+                >
+                  #{data?.id}
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="text-6xl leading-snug capitalize">
+                {pokemonSlug}
+              </div>
+              {/* Types */}
+              <div className="flex -mx-1 mb-3">
+                {(data?.types || []).map((slug) => (
+                  <div className="mx-1" key={slug}>
+                    <PokeTypeChip slug={slug} />
+                  </div>
+                ))}
+              </div>
+              {/* Weight/height */}
+              <div className="flex mb-2 text-gray-800">
+                <div className="mr-5 flex items-center">
+                  <span className="mr-2">
+                    <FaRuler />
+                  </span>
+                  <span className="">{data?.height} ft</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="mr-2">
+                    <FaWeight />
+                  </span>
+                  <span className="">{data?.weight} lbs</span>
+                </div>
+              </div>
+              {/*	Description */}
+              <div className="text-gray-800 mb-4">{data?.flavorText}</div>
+              <div className="text-xl font-bold">Weaknesses</div>
+              <div className="flex flex-wrap">
+                {(data?.weaknesses || []).map(({ factor, slug }) => (
+                  <div className="mr-1 mb-1" key={slug}>
+                    <PokeTypeChip slug={slug} isSmall isStarred={factor > 2} />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-          <div>
-            <div className="text-6xl leading-snug capitalize">
-              {pokemonSlug}
-            </div>
-            {/* Types */}
-            <div className="flex -mx-1 mb-3">
-              {(data?.types || []).map((slug) => (
-                <div className="mx-1" key={slug}>
-                  <PokeTypeChip slug={slug} />
+          <div className="mb-12" />
+          <div className="grid sm:grid-cols-4 gap-12">
+            <div>
+              <div className="text-xl font-bold mb-4">Stats</div>
+              <div className="w-32 mx-auto">
+                <div className="w-full relative" style={{ paddingTop: "100%" }}>
+                  <div className="absolute inset-0 text-gray-700">
+                    {data?.stats?.length && (
+                      <PokeStatChart
+                        stats={data.stats}
+                        color={color}
+                        bgColor={bgColor}
+                      />
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
-            {/* Weight/height */}
-            <div className="flex mb-2 text-gray-800">
-              <div className="mr-5 flex items-center">
-                <span className="mr-2">
-                  <FaRuler />
-                </span>
-                <span className="">{data?.height} ft</span>
-              </div>
-              <div className="flex items-center">
-                <span className="mr-2">
-                  <FaWeight />
-                </span>
-                <span className="">{data?.weight} lbs</span>
               </div>
             </div>
-            {/*	Description */}
-            <div className="text-gray-800 mb-4">{data?.flavorText}</div>
-            <div className="text-xl font-bold">Weaknesses</div>
-            <div className="flex flex-wrap">
-              {(data?.weaknesses || []).map(({ factor, slug }) => (
-                <div className="mr-1 mb-1" key={slug}>
-                  <PokeTypeChip slug={slug} isSmall isStarred={factor > 2} />
-                </div>
-              ))}
-            </div>
+            <EvolutionChain data={data} />
           </div>
+          <div className="mb-12" />
+          {/* Links */}
+          <BottomLinks data={data} />
         </div>
-        <div className="mb-12" />
-        <div className="grid sm:grid-cols-4 gap-12">
-          <div>
-            <div className="text-xl font-bold mb-4">Stats</div>
-            <div className="w-32 mx-auto">
-              <div className="w-full relative" style={{ paddingTop: "100%" }}>
-                <div className="absolute inset-0 text-gray-700">
-                  {data?.stats?.length && (
-                    <PokeStatChart
-                      stats={data.stats}
-                      color={color}
-                      bgColor={bgColor}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-          <EvolutionChain data={data} />
-        </div>
-        <div className="mb-12" />
-        {/* Links */}
-        <BottomLinks data={data} />
       </div>
-    </div>
+    </ViewWrapper>
   );
 };
 
@@ -176,7 +181,7 @@ const EvolutionChain: React.FC<{ data?: FetchPokemonDetailsDTO }> = ({
                   </div>
                   <div
                     className={classNames(
-                      "text-center text-gray-700 overflow-hidden whitespace-no-wrap",
+                      "text-center text-gray-700 overflow-hidden whitespace-no-wrap capitalize",
                       item.slug === data?.slug && "font-bold text-gray-900",
                     )}
                     style={{

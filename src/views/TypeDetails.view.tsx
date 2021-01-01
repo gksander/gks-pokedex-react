@@ -5,11 +5,15 @@ import { $api } from "../$api";
 import { LazyPokeListCard } from "../components/PokeListCard";
 import Skeleton from "react-loading-skeleton";
 import { PokeTypeChip } from "../components/PokeTypeChip";
+import { useTitle } from "react-use";
+import { ViewWrapper } from "../components/ViewWrapper";
 
 type TypeDetailsViewProps = {};
 
 export const TypeDetailsView: React.FC<TypeDetailsViewProps> = () => {
   const { typeSlug } = useParams<{ typeSlug: string }>();
+  useTitle(`Type: ${typeSlug}`);
+
   const { status, data } = useQuery(`type/${typeSlug}`, () =>
     $api.fetchTypeDetails({ slug: typeSlug }),
   );
@@ -42,45 +46,47 @@ export const TypeDetailsView: React.FC<TypeDetailsViewProps> = () => {
   })();
 
   return (
-    <div className="container max-w-2xl py-6 px-2">
-      <div className="text-6xl font-fancy mb-3 capitalize">{typeSlug}</div>
-      <div className="grid gap-6">
-        {damageCategories.map((cat) => (
-          <div key={cat.title}>
-            <div className="text-3xl font-thin mb-1">{cat.title}</div>
-            {(() => {
-              if (status === "loading") {
-                return <Skeleton />;
-              }
+    <ViewWrapper>
+      <div className="container max-w-2xl py-6 px-2">
+        <div className="text-6xl font-fancy mb-3 capitalize">{typeSlug}</div>
+        <div className="grid gap-6">
+          {damageCategories.map((cat) => (
+            <div key={cat.title}>
+              <div className="text-3xl font-thin mb-1">{cat.title}</div>
+              {(() => {
+                if (status === "loading") {
+                  return <Skeleton />;
+                }
 
-              if (!cat.types.length) {
-                return <div className="italic text-gray-700">Nothing...</div>;
-              }
+                if (!cat.types.length) {
+                  return <div className="italic text-gray-700">Nothing...</div>;
+                }
 
-              return (
-                <div className="flex flex-wrap">
-                  {cat.types.map((slug) => (
-                    <div className="mr-1 mb-1" key={slug}>
-                      <PokeTypeChip slug={slug} />
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
-          </div>
-        ))}
-      </div>
-      <hr className="my-6" />
-      <div className="text-4xl font-thin mb-4">Pokemon with this type</div>
-      {status === "loading" ? (
-        <Skeleton height={100} className="mb-8" />
-      ) : (
-        <div className="grid gap-8">
-          {(data?.pokemon || []).map((slug) => (
-            <LazyPokeListCard key={slug} slug={slug} />
+                return (
+                  <div className="flex flex-wrap">
+                    {cat.types.map((slug) => (
+                      <div className="mr-1 mb-1" key={slug}>
+                        <PokeTypeChip slug={slug} />
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
           ))}
         </div>
-      )}
-    </div>
+        <hr className="my-6" />
+        <div className="text-4xl font-thin mb-4">Pokemon with this type</div>
+        {status === "loading" ? (
+          <Skeleton height={100} className="mb-8" />
+        ) : (
+          <div className="grid gap-8">
+            {(data?.pokemon || []).map((slug) => (
+              <LazyPokeListCard key={slug} slug={slug} />
+            ))}
+          </div>
+        )}
+      </div>
+    </ViewWrapper>
   );
 };

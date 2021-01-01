@@ -5,10 +5,13 @@ import { $api } from "../$api";
 import { FetchPokemonListDTO } from "../dto/FetchPokemonList.dto";
 import { PokeListCard } from "../components/PokeListCard";
 import { useInView } from "react-intersection-observer";
+import { useTitle } from "react-use";
+import { ViewWrapper } from "../components/ViewWrapper";
 
 type HomeViewProps = {};
 
 export const HomeView: React.FC<HomeViewProps> = () => {
+  useTitle("GKS Pokedex - Home");
   const {
     data,
     status,
@@ -40,16 +43,8 @@ export const HomeView: React.FC<HomeViewProps> = () => {
     }
   }, [fetchNextPage, inView, isFetchingNextPage]);
 
-  if (status === "loading") {
-    return (
-      <div>
-        <p>LOADING!</p>
-      </div>
-    );
-  }
-
   return (
-    <div>
+    <ViewWrapper>
       <div className="mb-12">
         <div className="text-5xl font-fancy">Grant's Pokedex</div>
         <div>
@@ -69,16 +64,16 @@ export const HomeView: React.FC<HomeViewProps> = () => {
             rel="noreferrer"
             className="text-primary-800"
           >
-            Veekun.
+            Veekun
           </a>
           . Built with{" "}
           <a
-            href="https://gridsome.org/"
+            href="https://reactjs.org/"
             target="_blank"
             rel="noreferrer"
             className="text-primary-800"
           >
-            Gridsome.js
+            React.JS
           </a>{" "}
           and styled with the almighty{" "}
           <a
@@ -91,7 +86,7 @@ export const HomeView: React.FC<HomeViewProps> = () => {
           </a>
           . Check out{" "}
           <a
-            href="https://github.com/gksander/gks-pokedex-gridsome"
+            href="https://github.com/gksander/gks-pokedex-react"
             target="_blank"
             rel="noreferrer"
             className="text-primary-800"
@@ -103,22 +98,31 @@ export const HomeView: React.FC<HomeViewProps> = () => {
           data or images) used here.
         </div>
       </div>
-      <div className="grid gap-16">
-        {pokemon.map((p) => (
-          <PokeListCard key={p.id} pokemon={p} />
-        ))}
-      </div>
-      <div>
-        <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-          Fetch more!
-        </button>
-      </div>
-      {isFetchingNextPage && (
-        <div>
-          <div className="text-2xl">LOADING MORE</div>
-        </div>
+      {status === "loading" ? (
+        <p>Loading</p>
+      ) : (
+        <React.Fragment>
+          <div className="grid gap-16">
+            {pokemon.map((p) => (
+              <PokeListCard key={p.id} pokemon={p} />
+            ))}
+          </div>
+          <div>
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+            >
+              Fetch more!
+            </button>
+          </div>
+          {isFetchingNextPage && (
+            <div>
+              <div className="text-2xl">LOADING MORE</div>
+            </div>
+          )}
+          {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
+        </React.Fragment>
       )}
-      {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
-    </div>
+    </ViewWrapper>
   );
 };

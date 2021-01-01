@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import styles from "./PokeListCard.module.css";
 import { Pokeball } from "./Pokeball";
 import { PokeImg } from "./PokeImg";
 import { PokeTypeChip } from "./PokeTypeChip";
@@ -11,6 +10,7 @@ import Skeleton from "react-loading-skeleton";
 import { useQuery } from "react-query";
 import { $api } from "../$api";
 import { useInView } from "react-intersection-observer";
+import { motion } from "framer-motion";
 
 type PokeListCardProps = {
   isLoading?: boolean;
@@ -35,20 +35,35 @@ export const PokeListCard = React.forwardRef<HTMLDivElement, PokeListCardProps>(
         ref={ref}
       >
         <div className="sm:col-span-1 flex justify-center">
-          <div className={classNames("w-56 sm:w-full", styles.pokeImg)}>
+          <div className="w-56 sm:w-full">
             <div className="relative " style={{ paddingTop: "100%" }}>
-              <div className="absolute inset-0">
+              <motion.div
+                className="absolute inset-0"
+                initial="rest"
+                whileHover="hover"
+                animate="rest"
+              >
                 {isLoading ? (
                   <Skeleton circle={true} width="100%" height="100%" />
                 ) : (
                   <React.Fragment>
                     <div className="p-2" style={{ color: pokeballColor }}>
-                      <Pokeball
-                        className={classNames(
-                          "transition-all duration-300",
-                          styles.pokeball,
-                        )}
-                      />
+                      <motion.div
+                        variants={{
+                          rest: {
+                            scale: 1,
+                            rotate: 0,
+                            filter: "brightness(0) opacity(0.3)",
+                          },
+                          hover: {
+                            scale: 1.2,
+                            rotate: 180,
+                            filter: "brightness(1) opacity(1)",
+                          },
+                        }}
+                      >
+                        <Pokeball />
+                      </motion.div>
                     </div>
                     <Link to={`/${pokemon?.slug}`} className="absolute inset-0">
                       <PokeImg
@@ -58,7 +73,7 @@ export const PokeListCard = React.forwardRef<HTMLDivElement, PokeListCardProps>(
                     </Link>
                   </React.Fragment>
                 )}
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>

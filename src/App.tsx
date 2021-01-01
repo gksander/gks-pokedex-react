@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { PokemonDetailsView } from "./views/ PokemonDetails.view";
 import { TypeDetailsView } from "./views/TypeDetails.view";
 import { setBackgroundColor } from "./utils/setBackgroundColor";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const App: React.FC = () => {
   return (
@@ -50,14 +51,32 @@ const AppBody: React.FC = () => {
         <div className="container max-w-2xl flex flex-row justify-between items-center">
           <NavLink
             to="/"
-            className="flex items-center text-primary-800 px-3 py-2 rounded border-2 border-transparent hover:border-primary-800 transition-colors duration-150 homeLink"
+            className="text-primary-800 rounded border-2 border-transparent hover:border-primary-800 transition-colors duration-150 homeLink"
             activeClassName="border-primary-800"
             exact
           >
-            <div className="w-6 mr-2">
-              <Pokeball className="pokeball transition-all duration-300" />
-            </div>
-            <span className="font-bold text-lg">Pokedex</span>
+            <motion.div
+              className="flex items-center h-full w-full px-3 py-2 "
+              initial="rest"
+              whileHover="hover"
+              animate="rest"
+            >
+              <div className="w-6 mr-2">
+                <motion.div
+                  variants={{
+                    rest: {
+                      rotate: 0,
+                    },
+                    hover: {
+                      rotate: 180,
+                    },
+                  }}
+                >
+                  <Pokeball />
+                </motion.div>
+              </div>
+              <span className="font-bold text-lg">Pokedex</span>
+            </motion.div>
           </NavLink>
           <div>
             {LINKS.map((link) => (
@@ -76,18 +95,22 @@ const AppBody: React.FC = () => {
       </header>
       <main className="py-6 px-2">
         <div className="container max-w-2xl">
-          <Switch>
-            <Route path={ROUTES.SEARCH} component={SearchView} />
-            <Route path={`/types/:typeSlug`} component={TypeDetailsView} />
-            <Route path={ROUTES.TYPES} component={TypesView} />
-            <Route path={`/:pokemonSlug`} component={PokemonDetailsView} />
-            <Route path={ROUTES.HOME} component={HomeView} />
-          </Switch>
+          <AnimatePresence exitBeforeEnter initial={false}>
+            <Switch>
+              <Route path={ROUTES.SEARCH} component={SearchView} />
+              <Route path={`/types/:typeSlug`} component={TypeDetailsView} />
+              <Route path={ROUTES.TYPES} component={TypesView} />
+              <Route path={`/:pokemonSlug`} component={PokemonDetailsView} />
+              <Route path={ROUTES.HOME} component={HomeView} />
+            </Switch>
+          </AnimatePresence>
         </div>
       </main>
     </div>
   );
 };
+
+const MotionLink = motion.custom(NavLink);
 
 const LINKS = [
   {
