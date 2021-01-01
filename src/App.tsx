@@ -95,15 +95,25 @@ const AppBody: React.FC = () => {
       </header>
       <main className="py-6 px-2">
         <div className="container max-w-2xl">
-          <AnimatePresence exitBeforeEnter initial={false}>
-            <Switch>
-              <Route path={ROUTES.SEARCH} component={SearchView} />
-              <Route path={`/types/:typeSlug`} component={TypeDetailsView} />
-              <Route path={ROUTES.TYPES} component={TypesView} />
-              <Route path={`/:pokemonSlug`} component={PokemonDetailsView} />
-              <Route path={ROUTES.HOME} component={HomeView} />
-            </Switch>
-          </AnimatePresence>
+          <Route
+            render={({ location }) => (
+              <AnimatePresence exitBeforeEnter initial={false}>
+                <Switch key={location.pathname} location={location}>
+                  <Route path={ROUTES.SEARCH} component={SearchView} />
+                  <Route
+                    path={`/types/:typeSlug`}
+                    component={TypeDetailsView}
+                  />
+                  <Route path={ROUTES.TYPES} component={TypesView} />
+                  <Route
+                    path={`/:pokemonSlug`}
+                    component={PokemonDetailsView}
+                  />
+                  <Route path={ROUTES.HOME} component={HomeView} />
+                </Switch>
+              </AnimatePresence>
+            )}
+          />
         </div>
       </main>
     </div>

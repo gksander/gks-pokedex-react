@@ -1,8 +1,6 @@
 # IN PROGRESS
 
 ## TODO:
-- [ ] Local linting
-- [ ] Animate transition between pages
 - [ ] Better loading indicators 
 - [ ] Search page: animate list items
 - [ ] Types page: animate in the chips
