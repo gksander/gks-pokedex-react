@@ -1,0 +1,10 @@
+.pokeImg:hover .image {
+    cursor: pointer;
+}
+.pokeball {
+    filter: brightness(0) opacity(0.3);
+}
+.pokeImg:hover .pokeball {
+    filter: brightness(1) opacity(1);
+    transform: scale(1.2) rotate(180deg);
+}

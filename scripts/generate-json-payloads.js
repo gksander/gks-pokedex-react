@@ -277,7 +277,7 @@ const generateIndividualPokemonPayloads = async ({
 
         const payload = {
           id: pokemon.id,
-          name: capitalize(pokemon.identifier),
+          slug: pokemon.identifier,
           types,
           height: Math.round((parseInt(pokemon.height) / 3.048) * 100) / 100, // Feet
           weight: Math.round((parseInt(pokemon.weight) / 4.536) * 100) / 100, // Lbs

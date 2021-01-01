@@ -43,7 +43,7 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
 
   return (
     <div>
-      <div className="text-5xl font-bold">{data?.name}</div>
+      <div className="text-5xl font-bold">{data?.slug}</div>
       <div className="flex">
         <div className="flex-1">
           {data?.previousPokemon && (

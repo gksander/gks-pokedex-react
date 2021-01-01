@@ -1,6 +1,6 @@
 export interface FetchPokemonDetailsDTO {
   id: string;
-  name: string;
+  slug: string;
   types: string[];
   height: number;
   weight: number;

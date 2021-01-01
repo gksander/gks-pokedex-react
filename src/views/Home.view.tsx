@@ -96,13 +96,7 @@ export const HomeView: React.FC<HomeViewProps> = () => {
       </div>
       <div className="grid gap-16">
         {pokemon.map((p) => (
-          <PokeListCard
-            key={p.id}
-            id={p.id}
-            slug={p.slug}
-            types={p.types}
-            flavorText={p.flavorText}
-          />
+          <PokeListCard key={p.id} pokemon={p} />
         ))}
       </div>
       <div>
