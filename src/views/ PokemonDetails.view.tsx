@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "react-query";
 import tinycolor from "tinycolor2";
 import { $api } from "../$api";
@@ -14,6 +14,7 @@ import {
 import { FetchPokemonDetailsDTO } from "../dto/FetchPokemonDetails.dto";
 import { PokeImg } from "../components/PokeImg";
 import { PokeStatChart } from "../components/PokeStatChart";
+import { useKey } from "react-use";
 
 type PokemonDetailsViewProps = {};
 
@@ -99,7 +100,7 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
             <div className="text-xl font-bold">Weaknesses</div>
             <div className="flex flex-wrap">
               {(data?.weaknesses || []).map(({ factor, slug }) => (
-                <div className="mr-1 mb-1" key={`${pokemonSlug}-slug`}>
+                <div className="mr-1 mb-1" key={slug}>
                   <PokeTypeChip slug={slug} isSmall isStarred={factor > 2} />
                 </div>
               ))}
@@ -158,6 +159,18 @@ const BottomLinks: React.FC<{ data?: FetchPokemonDetailsDTO }> = ({ data }) => {
       );
     }
   }, [data, queryClient]);
+
+  const history = useHistory();
+  const goNext = React.useCallback(() => history.push(nextLink), [
+    history,
+    nextLink,
+  ]);
+  const goPrev = React.useCallback(() => history.push(prevLink), [
+    history,
+    prevLink,
+  ]);
+  useKey("ArrowRight", goNext, {}, [goNext]);
+  useKey("ArrowLeft", goPrev, {}, [goPrev]);
 
   return (
     <div className="flex justify-between text-sm text-gray-700">

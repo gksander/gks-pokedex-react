@@ -24,6 +24,7 @@
     "react-query": "^3.5.6",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "react-use": "^15.3.4",
     "tailwindcss": "^2.0.2",
     "tinycolor2": "^1.4.2",
     "typeface-kalam": "^1.1.13",
@@ -36,7 +37,7 @@
     "build": "yarn generate-json && yarn build:css && yarn react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:css": "NODE_ENV=production PUBLIC_URL=https://gif-maker.gksander.com postcss src/styles/tailwind.css -o src/styles/index.css",
+    "build:css": "NODE_ENV=production PUBLIC_URL=https://pokedex.gksander.com postcss src/styles/tailwind.css -o src/styles/index.css",
     "watch:css": "NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch"
   },
   "eslintConfig": {

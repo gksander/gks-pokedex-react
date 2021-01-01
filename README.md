@@ -1,9 +1,7 @@
 # IN PROGRESS
 
 ## TODO:
+- [ ] Pokemon evolution chain
 - [ ] Header pokeball rotate
-- [ ] Home page
-- [ ] Search page
-- [ ] Types page
-- [ ] Type details page
-- [ ] Pokemon details page
+- [x] Poke details right/left key handlers
+- [ ] Setup CI/CD
