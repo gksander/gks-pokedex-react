@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { FaStar } from "react-icons/all";
 
 type PokeTypeChipProps = {
   slug: string;
@@ -49,9 +50,8 @@ export const PokeTypeChip: React.FC<PokeTypeChipProps> = ({
         return "text-purple-600 border-purple-600 hover:bg-purple-100";
       case "rock":
         return "text-gray-700 border-gray-700 hover:bg-gray-100";
-      // S TODO: Dragon colors gone
       case "dragon":
-        return "text-orange-700 border-orange-700 hover:bg-orange-100";
+        return "text-yellow-700 border-yellow-700 hover:bg-yellow-100";
       case "steel":
         return "text-gray-700 border-gray-600 hover:bg-gray-100";
       default:
@@ -70,8 +70,12 @@ export const PokeTypeChip: React.FC<PokeTypeChipProps> = ({
       )}
       to={`/types/${slug}`}
     >
-      {slug}
-      {isStarred && <span>Star</span>}
+      <span>{slug}</span>
+      {isStarred && (
+        <span className="ml-1">
+          <FaStar />
+        </span>
+      )}
     </Link>
   );
 };
