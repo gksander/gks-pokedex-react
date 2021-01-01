@@ -3,7 +3,6 @@ import { useInfiniteQuery } from "react-query";
 import { QUERY_CACHE_KEYS } from "../consts";
 import { $api } from "../$api";
 import { FetchPokemonListDTO } from "../dto/FetchPokemonList.dto";
-import { Link } from "react-router-dom";
 import { PokeListCard } from "../components/PokeListCard";
 import { useInView } from "react-intersection-observer";
 
