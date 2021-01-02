@@ -18,6 +18,7 @@ import { PokeStatChart } from "../components/PokeStatChart";
 import { useKey, useTitle } from "react-use";
 import classNames from "classnames";
 import { ViewWrapper } from "../components/ViewWrapper";
+import { AnimatePresence, motion } from "framer-motion";
 
 type PokemonDetailsViewProps = {};
 
@@ -39,21 +40,34 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
       <div>
         <div className="container max-w-2xl py-6 px-2">
           <div className="grid sm:grid-cols-2 gap-12">
-            {/* S TODO: Image */}
             <div>
               <div
                 className="w-3/4 sm:w-full relative mx-auto"
                 style={{ paddingTop: "100%" }}
               >
                 <div className="absolute inset-0">
-                  <PokeImg
-                    slug={data?.slug || ""}
-                    id={data?.id || ""}
-                    imgClassName="w-full h-full object-contain"
-                    imgStyle={{
-                      filter: "drop-shadow(2px 2px 2px rgba(50, 50, 50, 0.8))",
-                    }}
-                  />
+                  <AnimatePresence exitBeforeEnter initial={false}>
+                    <motion.div
+                      key={data?.slug}
+                      variants={{
+                        in: { opacity: 1, transition: { duration: 0.2 } },
+                        out: { opacity: 0, transition: { duration: 0.15 } },
+                      }}
+                      initial="out"
+                      animate="in"
+                      exit="out"
+                    >
+                      <PokeImg
+                        slug={data?.slug || ""}
+                        id={data?.id || ""}
+                        imgClassName="w-full h-full object-contain"
+                        imgStyle={{
+                          filter:
+                            "drop-shadow(2px 2px 2px rgba(50, 50, 50, 0.8))",
+                        }}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
                 <div
                   className="absolute left-0 bottom-0 text-6xl text-gray-700 font-fancy font-thin"
@@ -202,20 +216,20 @@ const EvolutionChain: React.FC<{ data?: FetchPokemonDetailsDTO }> = ({
  * Bottom links, with pre-loading
  */
 const BottomLinks: React.FC<{ data?: FetchPokemonDetailsDTO }> = ({ data }) => {
-  const prevLink = `/${data?.previousPokemon || ""}`;
-  const nextLink = `/${data?.nextPokemon || ""}`;
+  const prevLink = `/${data?.previousPokemon?.slug || ""}`;
+  const nextLink = `/${data?.nextPokemon?.slug || ""}`;
   const queryClient = useQueryClient();
 
   React.useEffect(() => {
     if (data?.previousPokemon) {
-      queryClient.prefetchQuery(data.previousPokemon, () =>
-        $api.fetchPokemonDetails({ slug: data.previousPokemon }),
+      queryClient.prefetchQuery(data.previousPokemon.slug, () =>
+        $api.fetchPokemonDetails({ slug: data.previousPokemon?.slug }),
       );
     }
 
     if (data?.nextPokemon) {
-      queryClient.prefetchQuery(data.nextPokemon, () =>
-        $api.fetchPokemonDetails({ slug: data.nextPokemon }),
+      queryClient.prefetchQuery(data.nextPokemon.slug, () =>
+        $api.fetchPokemonDetails({ slug: data.nextPokemon?.slug }),
       );
     }
   }, [data, queryClient]);
@@ -233,24 +247,45 @@ const BottomLinks: React.FC<{ data?: FetchPokemonDetailsDTO }> = ({ data }) => {
   useKey("ArrowLeft", goPrev, {}, [goPrev]);
 
   return (
-    <div className="flex justify-between text-sm text-gray-700">
+    <div
+      className="flex justify-between text-sm text-gray-700 sticky bottom-0 py-3 border-t"
+      style={{
+        backgroundColor: "var(--background-color)",
+      }}
+    >
       <Link
         to={prevLink}
-        className="border-2 w-32 rounded flex justify-center items-center border-gray-700 hover:font-bold"
+        className="border-2 w-36 rounded flex justify-center items-center border-gray-700 hover:font-bold"
       >
         <span className="p-2 pr-0">
           <FaChevronLeft />
         </span>
         <span className="flex-grow flex justify-center p-2 overflow-hidden whitespace-no-wrap capitalize">
-          {data?.previousPokemon || "Pokedex"}
+          {data?.previousPokemon?.slug || "Pokedex"}
         </span>
+        {Boolean(data?.previousPokemon?.id) && (
+          <span className="w-8 p-2 pl-0">
+            <PokeImg
+              slug={data?.previousPokemon?.slug || ""}
+              id={data?.previousPokemon?.id || ""}
+            />
+          </span>
+        )}
       </Link>
       <Link
         to={nextLink}
-        className="border-2 w-32 rounded flex justify-center items-center border-gray-700 hover:font-bold"
+        className="border-2 w-36 rounded flex justify-center items-center border-gray-700 hover:font-bold"
       >
+        {Boolean(data?.nextPokemon?.id) && (
+          <span className="w-8 p-2 pr-0">
+            <PokeImg
+              slug={data?.nextPokemon?.slug || ""}
+              id={data?.nextPokemon?.id || ""}
+            />
+          </span>
+        )}
         <span className="flex-grow flex justify-center p-2 overflow-hidden whitespace-no-wrap capitalize">
-          {data?.nextPokemon || "Pokedex"}
+          {data?.nextPokemon?.slug || "Pokedex"}
         </span>
         <span className="p-2 pl-0">
           <FaChevronRight />

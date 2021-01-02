@@ -352,8 +352,18 @@ const generateIndividualPokemonPayloads = async ({
           height: Math.round((parseInt(pokemon.height) / 3.048) * 100) / 100, // Feet
           weight: Math.round((parseInt(pokemon.weight) / 4.536) * 100) / 100, // Lbs
           stats,
-          previousPokemon: previousPokemon?.identifier || "",
-          nextPokemon: nextPokemon?.identifier || "",
+          previousPokemon: previousPokemon
+            ? {
+                id: previousPokemon.id,
+                slug: previousPokemon.identifier,
+              }
+            : undefined,
+          nextPokemon: nextPokemon
+            ? {
+                id: nextPokemon.id,
+                slug: nextPokemon.identifier,
+              }
+            : undefined,
           flavorText,
           colorPalette: trimColorPalette({ colorPalette }),
           weaknesses,

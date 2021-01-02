@@ -5,8 +5,8 @@ export interface FetchPokemonDetailsDTO {
   height: number;
   weight: number;
   stats: Stat[];
-  previousPokemon: string;
-  nextPokemon: string;
+  previousPokemon?: SlimPokemonDetails;
+  nextPokemon?: SlimPokemonDetails;
   flavorText: string;
   colorPalette: ColorPalette;
   weaknesses: { slug: string; factor: number }[];
@@ -28,6 +28,11 @@ interface Stat {
 }
 
 export interface EvolutionChainItem {
+  id: string;
+  slug: string;
+}
+
+interface SlimPokemonDetails {
   id: string;
   slug: string;
 }

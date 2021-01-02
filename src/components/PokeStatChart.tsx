@@ -41,7 +41,6 @@ export const PokeStatChart: React.FC<PokeStatChartProps> = ({
         />
       ))}
       <path d={outerPath} className="stroke-current" fill="transparent" />
-      {/* S TODO: Inner path*/}
       <path
         d={innerPath}
         fill={color}

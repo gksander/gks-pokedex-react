@@ -29,19 +29,17 @@ export const PokeListCard = React.forwardRef<HTMLDivElement, PokeListCardProps>(
     })();
 
     return (
-      <div
+      <motion.div
         className="grid sm:grid-cols-4 gap-6 card transition-all duration-300"
         ref={ref}
+        initial="rest"
+        whileHover="hover"
+        animate="rest"
       >
         <div className="sm:col-span-1 flex justify-center">
           <div className="w-56 sm:w-full">
             <div className="relative " style={{ paddingTop: "100%" }}>
-              <motion.div
-                className="absolute inset-0"
-                initial="rest"
-                whileHover="hover"
-                animate="rest"
-              >
+              <motion.div className="absolute inset-0">
                 {isLoading ? (
                   <Skeleton circle={true} width="100%" height="100%" />
                 ) : (
@@ -105,7 +103,7 @@ export const PokeListCard = React.forwardRef<HTMLDivElement, PokeListCardProps>(
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     );
   },
 );
