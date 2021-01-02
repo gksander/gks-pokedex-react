@@ -7,6 +7,9 @@ import { PokeListCard } from "../components/PokeListCard";
 import { useInView } from "react-intersection-observer";
 import { useTitle } from "react-use";
 import { ViewWrapper } from "../components/ViewWrapper";
+import { LoadingIndicator } from "../components/LoadingIndicator";
+import Skeleton from "react-loading-skeleton";
+import { AnimatePresence, motion } from "framer-motion";
 
 type HomeViewProps = {};
 
@@ -98,31 +101,61 @@ export const HomeView: React.FC<HomeViewProps> = () => {
           data or images) used here.
         </div>
       </div>
-      {status === "loading" ? (
-        <p>Loading</p>
-      ) : (
-        <React.Fragment>
-          <div className="grid gap-16">
-            {pokemon.map((p) => (
-              <PokeListCard key={p.id} pokemon={p} />
+      <AnimatePresence exitBeforeEnter initial={false}>
+        {status === "loading" ? (
+          <motion.div
+            className="grid gap-16"
+            variants={variants}
+            initial="out"
+            animate="in"
+            exit="out"
+            key="skeleton"
+          >
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Skeleton height={160} width="100%" key={i} />
             ))}
-          </div>
-          <div>
-            <button
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-            >
-              Fetch more!
-            </button>
-          </div>
-          {isFetchingNextPage && (
-            <div>
-              <div className="text-2xl">LOADING MORE</div>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial="out"
+            animate="in"
+            variants={{
+              in: {
+                transition: {
+                  staggerChildren: 0.25,
+                },
+              },
+            }}
+            key="list"
+          >
+            <div className="grid gap-16">
+              {pokemon.map((p) => (
+                <motion.div
+                  variants={{
+                    out: {
+                      y: 5,
+                      opacity: 0,
+                    },
+                    in: {
+                      y: 0,
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  <PokeListCard key={p.id} pokemon={p} />
+                </motion.div>
+              ))}
             </div>
-          )}
-          {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
-        </React.Fragment>
-      )}
+            {isFetchingNextPage && <LoadingIndicator />}
+            {hasNextPage && !isFetchingNextPage && <div ref={ref} />}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </ViewWrapper>
   );
+};
+
+const variants = {
+  in: { opacity: 1, transition: { duration: 0.3 } },
+  out: { opacity: 0, transition: { duration: 0.2 } },
 };

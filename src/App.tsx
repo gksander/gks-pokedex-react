@@ -31,6 +31,7 @@ export const App: React.FC = () => {
 const AppBody: React.FC = () => {
   const shouldShowHeaderShadow = useShouldShowShadowHeader();
   useResetBgColorIfNecessary();
+  useScollToTopOnRouteChange();
 
   return (
     <div
@@ -98,7 +99,7 @@ const AppBody: React.FC = () => {
           <Route
             render={({ location }) => (
               <AnimatePresence exitBeforeEnter initial={false}>
-                <Switch key={location.pathname} location={location}>
+                <Switch location={location}>
                   <Route path={ROUTES.SEARCH} component={SearchView} />
                   <Route
                     path={`/types/:typeSlug`}
@@ -165,5 +166,13 @@ const useResetBgColorIfNecessary = () => {
     ) {
       setBackgroundColor("white");
     }
+  }, [pathname]);
+};
+
+const useScollToTopOnRouteChange = () => {
+  const { pathname } = useLocation();
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
   }, [pathname]);
 };

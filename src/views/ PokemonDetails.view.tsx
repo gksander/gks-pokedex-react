@@ -34,10 +34,6 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
   const bgColor = useBackgroundColor({ data });
   useSetBackgroundColor(bgColor);
 
-  React.useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [pokemonSlug]);
-
   return (
     <ViewWrapper>
       <div>
