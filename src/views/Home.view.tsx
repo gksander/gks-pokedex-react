@@ -7,7 +7,12 @@ import { PokeListCard } from "../components/PokeListCard";
 import { useKey, useTitle } from "react-use";
 import { ViewWrapper } from "../components/ViewWrapper";
 import Skeleton from "react-loading-skeleton";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useTransform,
+  useViewportScroll,
+} from "framer-motion";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/all";
 import classNames from "classnames";
@@ -34,6 +39,8 @@ export const HomeView: React.FC<HomeViewProps> = () => {
 
   const pokemon = isPreviousData ? [] : data?.pokemon || [];
   const totalNumPages = data?.pageInfo?.totalNumPages || 1;
+  const { scrollYProgress } = useViewportScroll();
+  const barWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
     <ViewWrapper>
@@ -156,6 +163,12 @@ export const HomeView: React.FC<HomeViewProps> = () => {
       </AnimatePresence>
       <div className="mt-12" />
       <div className="sticky bottom-0 py-1 bg-white border-t flex items-center">
+        {/* Bottom progress */}
+        {/*<motion.div*/}
+        {/*  className="absolute left-0 bottom-0 bg-primary-500 h-1"*/}
+        {/*  style={{ width: barWidth }}*/}
+        {/*/>*/}
+
         {(() => {
           const isDisabled = currentPage < 2;
 
@@ -181,12 +194,20 @@ export const HomeView: React.FC<HomeViewProps> = () => {
             </Link>
           );
         })()}
-        <div className="flex-grow text-center text-sm">
-          #{paginationDetails.minId} - #{paginationDetails.maxId}
-          <span className="hidden sm:inline">
-            {" "}
-            of #{paginationDetails.numPokemon}
-          </span>
+        <div className="flex-grow text-sm flex justify-center">
+          <div className="flex flex-col">
+            <div>
+              #{paginationDetails.minId} - #{paginationDetails.maxId}
+              <span className="hidden sm:inline">
+                {" "}
+                of #{paginationDetails.numPokemon}
+              </span>
+            </div>
+            <motion.div
+              className="bg-primary-600 h-1 rounded-full"
+              style={{ width: barWidth }}
+            />
+          </div>
         </div>
         {(() => {
           const isDisabled =
