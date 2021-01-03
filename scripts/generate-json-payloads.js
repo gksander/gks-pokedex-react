@@ -318,7 +318,9 @@ const generateIndividualPokemonPayloads = async ({
             (s) => String(s.evolution_chain_id) === evChainId,
           );
 
-          const firstSpecies = speciesInChain.find((s) => !s.evolves_from);
+          const firstSpecies = speciesInChain.find(
+            (s) => !s.evolves_from_species_id,
+          );
           if (!firstSpecies) return [];
 
           const buckets = [[getSlimDetails(firstSpecies)]];
