@@ -57,13 +57,35 @@ module.exports = async () => {
       await csv().fromFile(path.join(DATA_DIR, "pokemon_stats.csv"))
     ).filter((dat) => parseInt(dat.pokemon_id) <= NUM_POKEMON);
 
+    const slimPokemonDataHash = {};
+    for (let id = 1; id <= pokemonData.length; id++) {
+      const pokemon = pokemonData.find((p) => String(p.id) === String(id));
+      const flavorText = (
+        speciesFlavorData.find((rec) => String(rec.species_id) === String(id))
+          ?.flavor_text || "No description."
+      ).replace(/[\n\r\f]/g, " ");
+      const colorPalette = pokemonColorPalettes[id];
+      const types = pokemonTypesData
+        .filter((typeAssoc) => String(typeAssoc.pokemon_id) === String(id))
+        .map((typeAssoc) =>
+          typesData.find(
+            (type) => String(type.id) === String(typeAssoc.type_id),
+          ),
+        )
+        .map((type) => type.identifier);
+
+      slimPokemonDataHash[id] = {
+        id: pokemon.id,
+        name: capitalize(pokemon.identifier),
+        slug: pokemon.identifier,
+        flavorText,
+        colorPalette: trimColorPalette({ colorPalette }),
+        types,
+      };
+    }
+
     // Pokemon
-    await generatePaginatedPokemonList({
-      pokemonData,
-      pokemonTypesData,
-      typesData,
-      speciesFlavorData,
-    });
+    await generatePaginatedPokemonList({ slimPokemonDataHash });
     await generateIndividualPokemonPayloads({
       pokemonData,
       pokemonTypesData,
@@ -81,8 +103,8 @@ module.exports = async () => {
     await generateIndividualTypePayloads({
       typesData,
       pokemonTypesData,
-      pokemonData,
       damageFactorData,
+      slimPokemonDataHash,
     });
   } catch (err) {
     console.log(err);
@@ -107,8 +129,8 @@ const generateTypesList = async ({ typesData }) => {
 const generateIndividualTypePayloads = async ({
   typesData,
   pokemonTypesData,
-  pokemonData,
   damageFactorData,
+  slimPokemonDataHash,
 }) => {
   await fse.ensureDir(path.join(OUTPUT_DIR, "types"));
 
@@ -120,11 +142,7 @@ const generateIndividualTypePayloads = async ({
           pokemon: pokemonTypesData
             .filter((assoc) => assoc.type_id === type.id)
             .map((assoc) => assoc.pokemon_id)
-            .map(
-              (id) =>
-                pokemonData.find((p) => String(p.id) === String(id))
-                  ?.identifier || undefined,
-            ),
+            .map((id) => slimPokemonDataHash[id]),
           efficacyTo: damageFactorData
             .filter((assoc) => String(assoc.damage_type_id) === String(type.id))
             .map((assoc) => ({
@@ -173,48 +191,22 @@ const generateSearchList = async ({ pokemonData }) => {
  * Generating pokemon list
  */
 const PAGE_SIZE = 25;
-const generatePaginatedPokemonList = async ({
-  pokemonData,
-  speciesFlavorData,
-  pokemonTypesData,
-  typesData,
-}) => {
+const generatePaginatedPokemonList = async ({ slimPokemonDataHash }) => {
   await fse.ensureDir(path.join(OUTPUT_DIR, "pokemon/list"));
   await fse.emptyDir(path.join(OUTPUT_DIR, "pokemon/list"));
+  const NUM_POKEMON = Object.keys(slimPokemonDataHash).length;
 
-  const totalNumPages = Math.ceil(pokemonData.length / PAGE_SIZE);
+  const totalNumPages = Math.ceil(NUM_POKEMON / PAGE_SIZE);
   for (let page = 1; page <= totalNumPages; page++) {
     const pageFirstId = (page - 1) * PAGE_SIZE + 1;
-    const pageLastId = Math.min(page * PAGE_SIZE, pokemonData.length);
+    const pageLastId = Math.min(page * PAGE_SIZE, NUM_POKEMON);
     const payload = {
       pageInfo: { page, totalNumPages },
       pokemon: [],
     };
 
     for (let id = pageFirstId; id <= pageLastId; id++) {
-      const pokemon = pokemonData.find((p) => String(p.id) === String(id));
-      const flavorText = (
-        speciesFlavorData.find((rec) => String(rec.species_id) === String(id))
-          ?.flavor_text || "No description."
-      ).replace(/[\n\r\f]/g, " ");
-      const colorPalette = pokemonColorPalettes[id];
-      const types = pokemonTypesData
-        .filter((typeAssoc) => String(typeAssoc.pokemon_id) === String(id))
-        .map((typeAssoc) =>
-          typesData.find(
-            (type) => String(type.id) === String(typeAssoc.type_id),
-          ),
-        )
-        .map((type) => type.identifier);
-
-      payload.pokemon.push({
-        id: pokemon.id,
-        name: capitalize(pokemon.identifier),
-        slug: pokemon.identifier,
-        flavorText,
-        colorPalette: trimColorPalette({ colorPalette }),
-        types,
-      });
+      payload.pokemon.push(slimPokemonDataHash[id]);
     }
 
     await fse.writeJson(

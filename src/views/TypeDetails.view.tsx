@@ -2,7 +2,7 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { $api } from "../$api";
-import { LazyPokeListCard } from "../components/PokeListCard";
+import { PokeListCard } from "../components/PokeListCard";
 import Skeleton from "react-loading-skeleton";
 import { PokeTypeChip } from "../components/PokeTypeChip";
 import { useTitle } from "react-use";
@@ -81,8 +81,8 @@ export const TypeDetailsView: React.FC<TypeDetailsViewProps> = () => {
           <Skeleton height={100} className="mb-8" />
         ) : (
           <div className="grid gap-8">
-            {(data?.pokemon || []).map((slug) => (
-              <LazyPokeListCard key={slug} slug={slug} />
+            {(data?.pokemon || []).map((pokemon) => (
+              <PokeListCard pokemon={pokemon} />
             ))}
           </div>
         )}
