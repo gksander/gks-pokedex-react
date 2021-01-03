@@ -46,10 +46,10 @@
   "scripts": {
     "generate-json": "node ./scripts/generate-json-payloads.js",
     "start": "yarn generate-json && concurrently \"react-scripts start\" \"yarn watch:css\"",
-    "build": "yarn generate-json && yarn build:css && yarn react-scripts build",
+    "build": "PUBLIC_URL=https://pokedex.gksander.com yarn generate-json && yarn build:css && yarn react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:css": "NODE_ENV=production PUBLIC_URL=https://pokedex.gksander.com postcss src/styles/tailwind.css -o src/styles/index.css",
+    "build:css": "NODE_ENV=production postcss src/styles/tailwind.css -o src/styles/index.css",
     "watch:css": "NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
