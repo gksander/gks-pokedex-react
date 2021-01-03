@@ -29,6 +29,7 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
   const { data } = useQuery(pokemonSlug, () =>
     $api.fetchPokemonDetails({ slug: pokemonSlug }),
   );
+  usePreloadEvolutions({ data });
 
   // Colors
   const color = useColor({ data });
@@ -351,4 +352,21 @@ const useSetBackgroundColor = (bgColor = "") => {
       setBackgroundColor(bgColor);
     }
   }, [bgColor]);
+};
+
+const usePreloadEvolutions = ({ data }: { data?: FetchPokemonDetailsDTO }) => {
+  const queryClient = useQueryClient();
+  const evolutionChain = data?.evolutionChain || [];
+
+  React.useEffect(() => {
+    if (evolutionChain?.length > 1) {
+      for (let bucket of evolutionChain) {
+        for (let item of bucket) {
+          queryClient.prefetchQuery(item.slug, () =>
+            $api.fetchPokemonDetails({ slug: item.slug }),
+          );
+        }
+      }
+    }
+  }, [evolutionChain]);
 };
