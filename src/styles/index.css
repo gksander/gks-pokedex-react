@@ -30895,6 +30895,7 @@ video {
 html, body {
   font-family: "Kalam", sans-serif;
   font-size: 18px;
+  scroll-behavior: smooth;
 }
 
 @media (min-width: 640px) {

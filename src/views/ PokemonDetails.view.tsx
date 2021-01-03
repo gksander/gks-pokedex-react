@@ -356,9 +356,10 @@ const useSetBackgroundColor = (bgColor = "") => {
 
 const usePreloadEvolutions = ({ data }: { data?: FetchPokemonDetailsDTO }) => {
   const queryClient = useQueryClient();
-  const evolutionChain = data?.evolutionChain || [];
 
   React.useEffect(() => {
+    const evolutionChain = data?.evolutionChain || [];
+
     if (evolutionChain?.length > 1) {
       for (let bucket of evolutionChain) {
         for (let item of bucket) {
@@ -368,5 +369,5 @@ const usePreloadEvolutions = ({ data }: { data?: FetchPokemonDetailsDTO }) => {
         }
       }
     }
-  }, [evolutionChain]);
+  }, [queryClient, data]);
 };

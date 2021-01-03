@@ -8,8 +8,8 @@ import { FetchTypeDetailsDTO } from "./dto/FetchTypeDetails.dto";
  * Data fetching
  */
 class API {
-  fetchPokemonList = ({ pageParam = 1 }): Promise<FetchPokemonListDTO> =>
-    fetch(`/data/pokemon/list/${pageParam}.json`).then((res) => res.json());
+  fetchPokemonList = ({ page = 1 }): Promise<FetchPokemonListDTO> =>
+    fetch(`/data/pokemon/list/${page}.json`).then((res) => res.json());
 
   fetchPokemonDetails = ({ slug = "" }): Promise<FetchPokemonDetailsDTO> =>
     fetch(`/data/pokemon/details/${slug}.json`).then((res) => res.json());

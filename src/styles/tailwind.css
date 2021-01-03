@@ -16,5 +16,6 @@
 html, body {
     font-family: "Kalam", sans-serif;
     font-size: 18px;
+    scroll-behavior: smooth;
 }
 

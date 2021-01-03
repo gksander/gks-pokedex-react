@@ -190,7 +190,7 @@ const generateSearchList = async ({ pokemonData }) => {
 /**
  * Generating pokemon list
  */
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 50;
 const generatePaginatedPokemonList = async ({ slimPokemonDataHash }) => {
   await fse.ensureDir(path.join(OUTPUT_DIR, "pokemon/list"));
   await fse.emptyDir(path.join(OUTPUT_DIR, "pokemon/list"));
@@ -201,7 +201,12 @@ const generatePaginatedPokemonList = async ({ slimPokemonDataHash }) => {
     const pageFirstId = (page - 1) * PAGE_SIZE + 1;
     const pageLastId = Math.min(page * PAGE_SIZE, NUM_POKEMON);
     const payload = {
-      pageInfo: { page, totalNumPages },
+      pageInfo: {
+        page,
+        totalNumPages,
+        pageSize: PAGE_SIZE,
+        totalNumPokemon: NUM_POKEMON,
+      },
       pokemon: [],
     };
 

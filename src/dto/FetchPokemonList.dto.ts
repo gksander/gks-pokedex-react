@@ -5,7 +5,9 @@ export interface FetchPokemonListDTO {
 
 interface PageInfo {
   page: number;
+  pageSize: number;
   totalNumPages: number;
+  totalNumPokemon: number;
 }
 
 interface Pokemon {

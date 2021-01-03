@@ -106,6 +106,7 @@ const AppBody: React.FC = () => {
                     component={TypeDetailsView}
                   />
                   <Route path={ROUTES.TYPES} component={TypesView} />
+                  <Route path={`/page/:page`} component={HomeView} />
                   <Route
                     path={`/:pokemonSlug`}
                     component={PokemonDetailsView}
@@ -162,7 +163,8 @@ const useResetBgColorIfNecessary = () => {
   React.useEffect(() => {
     if (
       [ROUTES.HOME, ROUTES.SEARCH].includes(pathname) ||
-      pathname.startsWith("/types")
+      pathname.startsWith("/types") ||
+      pathname.startsWith("/page")
     ) {
       setBackgroundColor("white");
     }
