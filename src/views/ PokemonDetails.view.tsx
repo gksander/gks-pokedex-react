@@ -50,8 +50,16 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
                     <motion.div
                       key={data?.slug}
                       variants={{
-                        in: { opacity: 1, transition: { duration: 0.2 } },
-                        out: { opacity: 0, transition: { duration: 0.15 } },
+                        in: {
+                          opacity: 1,
+                          scale: 1,
+                          transition: { duration: 0.2 },
+                        },
+                        out: {
+                          opacity: 0,
+                          scale: 0.7,
+                          transition: { duration: 0.15 },
+                        },
                       }}
                       initial="out"
                       animate="in"
@@ -61,10 +69,6 @@ export const PokemonDetailsView: React.FC<PokemonDetailsViewProps> = () => {
                         slug={data?.slug || ""}
                         id={data?.id || ""}
                         imgClassName="w-full h-full object-contain"
-                        imgStyle={{
-                          filter:
-                            "drop-shadow(2px 2px 2px rgba(50, 50, 50, 0.8))",
-                        }}
                       />
                     </motion.div>
                   </AnimatePresence>
@@ -263,27 +267,51 @@ const BottomLinks: React.FC<{ data?: FetchPokemonDetailsDTO }> = ({ data }) => {
         <span className="flex-grow flex justify-center p-2 overflow-hidden whitespace-no-wrap capitalize">
           {data?.previousPokemon?.slug || "Pokedex"}
         </span>
-        {Boolean(data?.previousPokemon?.id) && (
-          <span className="w-8 p-2 pl-0">
-            <PokeImg
-              slug={data?.previousPokemon?.slug || ""}
-              id={data?.previousPokemon?.id || ""}
-            />
-          </span>
-        )}
+        <AnimatePresence exitBeforeEnter>
+          {Boolean(data?.previousPokemon?.id) && (
+            <motion.span
+              className="w-8 h-8 p-2 pl-0"
+              key={data?.previousPokemon?.slug || ""}
+              variants={{
+                in: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
+                out: { opacity: 0, scale: 0.4, transition: { duration: 0.1 } },
+              }}
+              initial="out"
+              animate="in"
+              exit="out"
+            >
+              <PokeImg
+                slug={data?.previousPokemon?.slug || ""}
+                id={data?.previousPokemon?.id || ""}
+              />
+            </motion.span>
+          )}
+        </AnimatePresence>
       </Link>
       <Link
         to={nextLink}
         className="border-2 w-36 rounded flex justify-center items-center border-gray-700 hover:font-bold"
       >
-        {Boolean(data?.nextPokemon?.id) && (
-          <span className="w-8 p-2 pr-0">
-            <PokeImg
-              slug={data?.nextPokemon?.slug || ""}
-              id={data?.nextPokemon?.id || ""}
-            />
-          </span>
-        )}
+        <AnimatePresence exitBeforeEnter>
+          {Boolean(data?.nextPokemon?.id) && (
+            <motion.span
+              className="w-8 h-8 p-2 pr-0"
+              key={data?.nextPokemon?.slug || ""}
+              variants={{
+                in: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
+                out: { opacity: 0, scale: 0.4, transition: { duration: 0.1 } },
+              }}
+              initial="out"
+              animate="in"
+              exit="out"
+            >
+              <PokeImg
+                slug={data?.nextPokemon?.slug || ""}
+                id={data?.nextPokemon?.id || ""}
+              />
+            </motion.span>
+          )}
+        </AnimatePresence>
         <span className="flex-grow flex justify-center p-2 overflow-hidden whitespace-no-wrap capitalize">
           {data?.nextPokemon?.slug || "Pokedex"}
         </span>
